@@ -22,6 +22,7 @@ flowchart LR
         VK[Valkey]
         ML[FastAPI - ML]
         BE[Rails - Backend]
+        SQ[Sidekiq - Workers]
         FE[Laravel - Frontend]
         TF[Terraform]
     end
@@ -36,6 +37,7 @@ flowchart LR
     style VK fill:#E65100,color:#fff,stroke:#fff
     style ML fill:#2E7D32,color:#fff,stroke:#fff
     style BE fill:#6A1B9A,color:#fff,stroke:#fff
+    style SQ fill:#8E24AA,color:#fff,stroke:#fff
     style FE fill:#1565C0,color:#fff,stroke:#fff
     style TF fill:#37474F,color:#fff,stroke:#fff
 ```
@@ -166,8 +168,8 @@ flowchart TD
 - Nenhuma credencial hardcoded nos arquivos de configuração
 - Secrets armazenados no LocalStack Secrets Manager
 - Conexões entre serviços ocorrem na rede interna do Docker
-- O Rails deve ler as credenciais do PostgreSQL do Secrets Manager no boot, com fallback para variáveis de ambiente em caso de indisponibilidade do LocalStack
-- O Terraform deve criar o secret no Secrets Manager contendo as credenciais do banco antes do Rails iniciar
+- O Rails deve ler as credenciais do PostgreSQL do Secrets Manager no boot, com retry (5 tentativas, intervalo de 2s) e fallback para variáveis de ambiente em caso de indisponibilidade do LocalStack ou do secret
+- O Terraform é executado manualmente após o `docker compose up -d`; o retry no boot do Rails garante que o secret seja lido assim que estiver disponível, sem exigir `depends_on` entre serviços
 
 ## RNF08 - Versionamento de API
 
