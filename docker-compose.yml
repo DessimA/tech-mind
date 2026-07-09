@@ -34,8 +34,9 @@ services:
     restart: unless-stopped
 
   localstack:
-    image: localstack/localstack:2.3.0
+    image: localstack/localstack-pro:latest
     environment:
+      LOCALSTACK_AUTH_TOKEN: ${LOCALSTACK_AUTH_TOKEN:?token required}
       AWS_ENDPOINT: ${AWS_ENDPOINT:-http://localstack:4566}
       AWS_REGION: ${AWS_REGION:-us-east-1}
       SERVICES: s3,secretsmanager,sts
