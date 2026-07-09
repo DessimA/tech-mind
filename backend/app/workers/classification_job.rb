@@ -31,19 +31,20 @@ class ClassificationJob
         status: "done"
       )
     elsif response.code.to_i == 503
-      fail!("Modelo ML indisponível")
+      fail!(conteudo, "Modelo ML indisponível")
     else
-      fail!("HTTP #{response.code}: #{response.body}")
+      fail!(conteudo, "HTTP #{response.code}: #{response.body}")
     end
   rescue ActiveRecord::RecordNotFound
     logger.warn "ClassificationJob: conteudo #{conteudo_id} nao encontrado"
   rescue StandardError => e
-    fail!(e.message)
+    fail!(conteudo, e.message) if conteudo
   end
 
   private
 
-  def fail!(reason)
+  def fail!(conteudo, reason)
+    conteudo&.update!(status: "failed")
     raise ClassificationError, reason
   end
 end
