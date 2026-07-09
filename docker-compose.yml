@@ -1,0 +1,42 @@
+name: techmind
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER:-techmind}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-techmind_dev}
+      POSTGRES_DB: ${DB_NAME:-techmind_dev}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-techmind} -d ${DB_NAME:-techmind_dev}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - techmind
+    restart: unless-stopped
+
+  valkey:
+    image: valkey/valkey:8-alpine
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    volumes:
+      - valkey-data:/data
+    networks:
+      - techmind
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  valkey-data:
+
+networks:
+  techmind:
+    driver: bridge
