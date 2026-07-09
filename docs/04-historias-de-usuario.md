@@ -47,8 +47,8 @@ flowchart LR
 ## US02 - Visualização de Conteúdos Classificados
 
 **Como** usuário do sistema
-**Quero** ver a listagem dos conteúdos que cadastrei
-**Para** consultar a categoria e palavras-chave atribuídas pelo sistema
+**Quero** ver a listagem de todos os conteúdos cadastrados no sistema
+**Para** consultar a categoria e palavras-chave atribuídas automaticamente
 
 **Critérios de Aceitação:**
 - A listagem exibe título, categoria, palavras-chave e data de criação
@@ -64,7 +64,7 @@ flowchart LR
 ## US03 - Busca por Conteúdo
 
 **Como** usuário do sistema
-**Quero** pesquisar conteúdos por título ou palavras-chave
+**Quero** pesquisar conteúdos do sistema por título ou palavras-chave
 **Para** encontrar rapidamente um conhecimento específico
 
 **Critérios de Aceitação:**
@@ -81,7 +81,7 @@ flowchart LR
 ## US04 - Visualização Detalhada
 
 **Como** usuário do sistema
-**Quero** clicar em um conteúdo para ver seus detalhes completos
+**Quero** clicar em um conteúdo listado para ver seus detalhes completos
 **Para** ler o texto completo e ver a classificação atribuída
 
 **Critérios de Aceitação:**
@@ -141,7 +141,7 @@ flowchart LR
 - `POST /predict` aceita `{ "texto": "..." }`
 - Retorna `{ "categoria": "...", "probabilidade": 0.95, "informacoes_adicionais": [...] }`
 - O modelo Logistic Regression + TF-IDF está carregado
-- Para textos muito diferentes do treinamento, retorna `"categoria": "desconhecida"` se probabilidade < threshold configurável
+- Para textos muito diferentes do treinamento, retorna `"categoria": "Desconhecida"` se probabilidade < threshold configurável
 
 ```mermaid
 flowchart LR
@@ -151,7 +151,7 @@ flowchart LR
     D --> E[Predição com<br/>LogisticRegression]
     E --> F{Probabilidade<br/>> threshold?}
     F -->|Sim| G[Retorna categoria + palavras-chave]
-    F -->|Não| H[Retorna 'desconhecida']
+    F -->|Não| H[Retorna 'Desconhecida']
 
     style A fill:#37474F,color:#fff,stroke:#fff
     style B fill:#1565C0,color:#fff,stroke:#fff
