@@ -166,6 +166,8 @@ flowchart TD
 - Nenhuma credencial hardcoded nos arquivos de configuração
 - Secrets armazenados no LocalStack Secrets Manager
 - Conexões entre serviços ocorrem na rede interna do Docker
+- O Rails deve ler as credenciais do PostgreSQL do Secrets Manager no boot, com fallback para variáveis de ambiente em caso de indisponibilidade do LocalStack
+- O Terraform deve criar o secret no Secrets Manager contendo as credenciais do banco antes do Rails iniciar
 
 ## RNF08 - Versionamento de API
 
@@ -180,6 +182,8 @@ flowchart TD
 **Descrição:** A API deve ter proteção contra abuso.
 
 **Critérios de Aceitação:**
-- Limite de 100 requests/minuto por IP nos endpoints do Rails
+- Limite de 100 requests/minuto por IP real do cliente nos endpoints do Rails
+- O Laravel deve repassar o IP real do cliente via header `X-Forwarded-For`
+- O Rails deve confiar no header `X-Forwarded-For` apenas por estar acessível exclusivamente na rede interna do Docker (sem risco de spoofing externo)
 - Resposta 429 Too Many Requests ao exceder o limite
 - Rate limit configurável via variável de ambiente

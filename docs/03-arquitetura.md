@@ -47,13 +47,14 @@ flowchart TB
 
     LARAVEL -->|HTTP server-side<br/>POST /v1/conteudos| RAILS
     LARAVEL -->|HTTP server-side<br/>GET /v1/conteudos| RAILS
-    RAILS -->|env vars diretas| PG
+    RAILS -->|Lê credenciais no boot<br/>com fallback para env vars| SM
+    RAILS -->|Conecta após ler secrets| PG
     RAILS -->|env vars diretas| VALKEY
     RAILS -->|Enfileira jobs| VALKEY
     SIDEKIQ -->|Consome fila| VALKEY
     SIDEKIQ -->|POST /predict| FASTAPI
     SIDEKIQ -->|Atualiza status| PG
-    SIDEKIQ -.->|Só após TF<br/>service_completed_successfully| S3
+    SIDEKIQ -.->|S3 save com rescue<br/>não bloqueia classificação| S3
     TF -->|Provisiona| S3
     TF -->|Provisiona| SM
 
@@ -77,10 +78,11 @@ flowchart TB
 
 ### Observações importantes
 
-- **Rails e Laravel usam variáveis de ambiente** do `docker-compose.yml` para conectar em PostgreSQL e Valkey. Nenhum serviço crítico depende do Secrets Manager ou do LocalStack para subir.
+- **Rails lê credenciais do PostgreSQL do Secrets Manager no boot.** O Terraform deve criar o secret antes do Rails iniciar. Se o LocalStack estiver indisponível, o Rails faz fallback para variáveis de ambiente (`DB_HOST`, `DB_USER`, etc.), garantindo resiliência em cenários de desenvolvimento e teste.
 - **Laravel chama Rails via HTTP server-side** (PHP faz a requisição HTTP para o backend). Sem CORS, sem chamadas diretas do navegador para a API.
-- **Apenas o Sidekiq worker depende do Terraform** (via `depends_on: terraform: condition: service_completed_successfully`), pois é ele quem salva artefatos no S3.
-- **Rails não salva no S3 nem lê do Secrets Manager durante o boot.** Toda interação com AWS é feita exclusivamente pelo Sidekiq.
+- **Laravel repassa o IP real do cliente** via header `X-Forwarded-For` para que o Rails aplique rate limiting por IP real do usuário (RNF09).
+- **Sidekiq não depende do Terraform para subir.** A gravação no S3 é feita com tratamento de exceção (begin/rescue): se o S3 ainda não estiver disponível, o erro é registrado em log e a classificação continua sem bloqueio. O Terraform é executado em paralelo e, quando concluir, o S3 estará disponível para os jobs seguintes.
+- **Rails não salva no S3.** Toda interação com S3 é feita exclusivamente pelo Sidekiq, mantendo a responsabilidade única.
 
 ## 3. Fluxo de Dados (Cadastro + Classificação)
 
@@ -147,8 +149,8 @@ sequenceDiagram
 | ML assíncrono | Sidekiq job | Não bloquear o request do usuário; resiliência com retry |
 | ML como serviço separado | FastAPI + scikit-learn | Separação de concerns; permite escalar ML independentemente |
 | Infra mockada | LocalStack Pro | Fidelidade à AWS sem custos; S3 e Secrets Manager funcionais |
-| Boot sem depender de Secrets Manager | env vars diretas para DB/Valkey | Remove dependência de ordem; serviços críticos sobem sem Terraform |
-| Sidekiq espera Terraform | `service_completed_successfully` | Uma linha de config no docker-compose, sem lógica extra |
+| Rails lê credenciais do SM no boot | Leitura do Secrets Manager com fallback para env vars | Demonstra uso real do SM; fallback garante resiliência em dev/teste |
+| Sidekiq não bloqueia por Terraform | S3 save com rescue; classificação segue sem S3 | Funcionalidade principal não acoplada à infra provisionada |
 | Laravel → Rails | HTTP server-side (sem CORS) | Mais simples que chamadas diretas do navegador; sem configurar CORS |
 | Quem salva no S3 | Apenas Sidekiq | Rails não precisa de credenciais AWS no boot; responsabilidade única |
 | Nome do campo de saída | `informacoes_adicionais` | Nome descritivo para as palavras-chave extraídas pelo ML |
@@ -157,29 +159,35 @@ sequenceDiagram
 
 ```mermaid
 flowchart TB
-    subgraph Critico [Caminho crítico de boot - sobe rápido]
-        PG[1. PostgreSQL<br/>Banco de dados] --> RAILS[3. Rails API<br/>env vars diretas]
-        VK[2. Valkey<br/>Cache + Fila] --> RAILS
-        RAILS --> FE[4. Laravel<br/>HTTP server-side para Rails]
+    subgraph Critico [Caminho crítico de boot]
+        PG[1. PostgreSQL<br/>Banco de dados]
+        VK[2. Valkey<br/>Cache + Fila]
+        LS[3. LocalStack<br/>Serviços AWS mockados]
+        TF[4. Terraform apply<br/>cria SM secret + S3 bucket]
+        RAILS[5. Rails API<br/>lê credenciais do SM<br/>fallback para env vars]
+        FE[6. Laravel<br/>HTTP server-side]
+        ML[7. FastAPI<br/>ML Service]
+        SQ[8. Sidekiq worker<br/>começa classificar<br/>S3 try/rescue]
     end
 
-    subgraph Provisionamento [Provisionamento de infra - pode levar tempo]
-        LS[a. LocalStack<br/>Serviços AWS mockados] --> TF[b. Terraform apply<br/>cria bucket S3 + secrets]
-    end
-
-    TF -.->|service_completed_successfully| SQ[5. Sidekiq worker<br/>só ele precisa do S3]
-    PG --> SQ
+    PG --> RAILS
+    VK --> RAILS
+    LS --> TF
+    TF --> SM[Secrets Manager<br/>populado]
+    SM --> RAILS
+    RAILS --> FE
+    RAILS --> SQ
     VK --> SQ
+    PG --> SQ
     ML --> SQ
 
-    style Critico fill:#1B5E20,color:#fff,stroke:#fff
+    style Critico fill:#1B237E,color:#fff,stroke:#fff
     style PG fill:#0D47A1,color:#fff,stroke:#fff
     style VK fill:#E65100,color:#fff,stroke:#fff
-    style RAILS fill:#6A1B9A,color:#fff,stroke:#fff
-    style FE fill:#1565C0,color:#fff,stroke:#fff
-    style Provisionamento fill:#4A148C,color:#fff,stroke:#fff
     style LS fill:#00838F,color:#fff,stroke:#fff
     style TF fill:#37474F,color:#fff,stroke:#fff
-    style SQ fill:#8E24AA,color:#fff,stroke:#fff
+    style RAILS fill:#6A1B9A,color:#fff,stroke:#fff
+    style FE fill:#1565C0,color:#fff,stroke:#fff
     style ML fill:#2E7D32,color:#fff,stroke:#fff
+    style SQ fill:#8E24AA,color:#fff,stroke:#fff
 ```
