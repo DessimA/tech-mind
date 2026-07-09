@@ -42,7 +42,7 @@ ml-service/*.pyc
 ml-service/.pytest_cache/
 
 ## Jupyter
-ml-service/notebook/.ipynb_checkpoints/
+ml-service/notebooks/.ipynb_checkpoints/
 
 ## IDE
 .vscode/

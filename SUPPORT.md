@@ -35,7 +35,7 @@ R: `docker compose exec backend bash` (substitua `backend` pelo nome do serviço
 
 **P: Como testar a API sem o frontend?**
 
-R: Use a documentação interativa do FastAPI em `http://localhost:8000/docs` ou ferramentas como `curl`/Postman.
+R: Acesse o container do FastAPI diretamente: `docker compose exec ml-service curl localhost:8000/docs` ou use `curl`/Postman apontando para `http://localhost:80/api/...` (via Laravel, que roteia para o Rails internamente). A porta 8000 do ML Service não é exposta no host por segurança (apenas a porta 80 do Laravel fica acessível externamente).
 
 ### LocalStack
 
