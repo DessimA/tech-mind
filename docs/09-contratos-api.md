@@ -217,12 +217,12 @@ Enquanto `status` é `pending` ou `processing`, os campos de classificação ret
 }
 ```
 
-Quando `status = "failed"`, os campos `categoria` e `informacoes_adicionais` retornam valores padrão:
+Quando `status = "failed"`, todos os campos de classificação retornam `null`:
 
 ```json
 {
   "categoria": null,
   "probabilidade": null,
-  "informacoes_adicionais": []
+  "informacoes_adicionais": null
 }
 ```
