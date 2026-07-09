@@ -104,13 +104,14 @@ sequenceDiagram
 tech-mind/
 ├── docker-compose.yml       # Orquestração de todos os serviços
 ├── .env                     # Variáveis de ambiente
+├── .env.example             # Exemplo de variáveis de ambiente
 ├── .gitignore
 │
 ├── infra/                   # Terraform + LocalStack
-│   ├── provider.tf
-│   ├── main.tf
-│   ├── variables.tf
-│   └── outputs.tf
+│   ├── provider.tf          # Provider AWS apontando para LocalStack
+│   ├── main.tf              # S3 bucket + Secrets Manager
+│   ├── variables.tf         # Variáveis de entrada
+│   └── outputs.tf           # ARN do bucket e secret
 │
 ├── frontend/                # PHP + Laravel
 │   ├── Dockerfile
@@ -123,10 +124,13 @@ tech-mind/
 ├── ml-service/              # Python + FastAPI
 │   ├── Dockerfile
 │   ├── requirements.txt
+│   ├── model.joblib         # Modelo treinado (gerado pelo notebook)
+│   ├── data/
+│   │   └── train.csv        # Dataset sintético (80 exemplos)
 │   ├── app/
 │   │   ├── main.py
 │   │   └── model/
-│   └── notebook/
+│   └── notebooks/
 │       └── techmind_ml.ipynb
 │
 └── docs/                    # Documentação completa
@@ -139,7 +143,9 @@ tech-mind/
     ├── 06-matriz-de-decisoes.md
     ├── 07-glossario.md
     ├── 08-taxonomia-ml.md
-    └── 09-contratos-api.md
+    ├── 09-contratos-api.md
+    ├── 10-modelo-de-dados.md
+    └── 10-variaveis-de-ambiente.md
 ```
 
 ---
@@ -195,6 +201,8 @@ Documentação completa disponível em [`docs/`](docs/):
 | [07-glossario.md](docs/07-glossario.md) | Glossário de termos técnicos |
 | [08-taxonomia-ml.md](docs/08-taxonomia-ml.md) | Taxonomia de categorias do ML |
 | [09-contratos-api.md](docs/09-contratos-api.md) | Contratos formais das APIs (request/response) |
+| [10-modelo-de-dados.md](docs/10-modelo-de-dados.md) | Schema do banco de dados, índices e estratégia de busca |
+| [10-variaveis-de-ambiente.md](docs/10-variaveis-de-ambiente.md) | Variáveis de ambiente do projeto |
 
 ---
 

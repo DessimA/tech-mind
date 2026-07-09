@@ -28,6 +28,7 @@ Este documento registra as decisões tomadas durante a fase de planejamento, inc
 | 18 | Campo de saída do ML | `informacoes_adicionais` | Fechada | Nome descritivo e único em todos os documentos |
 | 19 | Versionamento do modelo ML | `.joblib` versionado no repositório | Fechada | Reproducível em CI; health check valida versão esperada |
 | 20 | Banco isolado para testes | `techmind_test` via profile de test no compose | Fechada | Evita que testes apaguem dados de desenvolvimento |
+| 21 | Estratégia de busca por palavra-chave | `text[]` + índice GIN + operador `ANY()` | Fechada | GIN resolve busca em array; `ANY()` é nativo do Postgres |
 
 ```mermaid
 flowchart LR
@@ -51,6 +52,7 @@ flowchart LR
         D18[campo informacoes_adicionais]
         D19[Modelo .joblib versionado]
         D20[Banco de teste isolado]
+        D21[Busca keyword: text[] + GIN]
     end
 
     subgraph Pos-MVP
@@ -77,6 +79,7 @@ flowchart LR
     style D18 fill:#1B5E20,color:#fff,stroke:#fff
     style D19 fill:#1B5E20,color:#fff,stroke:#fff
     style D20 fill:#1B5E20,color:#fff,stroke:#fff
+    style D21 fill:#1B5E20,color:#fff,stroke:#fff
     style Pos-MVP fill:#4A148C,color:#fff,stroke:#fff
     style D1 fill:#E65100,color:#fff,stroke:#fff
 ```
@@ -93,6 +96,6 @@ flowchart LR
 | Deploy em cloud real | MVP roda apenas localmente via Docker |
 | Monitoramento avançado (Datadog/Grafana) | Logs JSON + health checks são suficientes para o escopo inicial |
 | Pipeline de CI/CD para ML (retreinamento) | Modelo será treinado uma vez no notebook; retreinamento pode vir depois |
-| Índice avançado de busca (GIN/trigram) | Com paginação de 20 itens e escopo MVP, LIKE com índice btree simples já resolve |
+| Índice trigram para busca fuzzy em `titulo` | LIKE + btree já é suficiente para MVP com até 10K registros |
 | Invalidar cache ao concluir classificação (não só ao cadastrar) | Janela de até 5 min de status desatualizado, aceitável para MVP |
 | Reprocessamento manual de conteúdo `failed` | Será implementado como UX futura quando houver autenticação |

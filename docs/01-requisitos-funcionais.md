@@ -6,6 +6,8 @@
 
 **Critérios de Aceitação:**
 - O frontend (Laravel) deve expor formulário com campos `titulo` (string, obrigatório) e `texto` (string, obrigatório)
+- `titulo`: mínimo 3 caracteres, máximo 200
+- `texto`: mínimo 10 caracteres, máximo 5000
 - O formulário deve validar os campos antes de enviar ao backend
 - O backend (Rails) deve receber os dados via `POST /v1/conteudos`
 - O Rails deve salvar o registro no PostgreSQL e disparar a classificação via Sidekiq

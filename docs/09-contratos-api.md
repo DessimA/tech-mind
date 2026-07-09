@@ -207,6 +207,16 @@ O campo `status` no banco e nas respostas da API segue este ciclo:
 | `done` | Classificação concluída com sucesso |
 | `failed` | Falha após 3 tentativas de classificação |
 
+Enquanto `status` é `pending` ou `processing`, os campos de classificação retornam `null`:
+
+```json
+{
+  "categoria": null,
+  "probabilidade": null,
+  "informacoes_adicionais": null
+}
+```
+
 Quando `status = "failed"`, os campos `categoria` e `informacoes_adicionais` retornam valores padrão:
 
 ```json
