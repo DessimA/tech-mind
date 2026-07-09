@@ -1,0 +1,54 @@
+# TechMind .gitignore
+
+## Ambiente
+.env
+.env.local
+.env.*.local
+
+## Docker
+docker-data/
+pgdata/
+
+## Terraform
+infra/.terraform/
+infra/terraform.tfstate
+infra/terraform.tfstate.backup
+infra/*.tfplan
+
+## Ruby / Rails
+backend/vendor/
+backend/.bundle/
+backend/log/
+backend/tmp/
+backend/public/assets/
+backend/storage/
+
+## PHP / Laravel
+frontend/vendor/
+frontend/node_modules/
+frontend/.env
+frontend/.env.backup
+frontend/storage/framework/cache/data/
+frontend/storage/framework/sessions/
+frontend/storage/framework/views/
+
+## Python
+ml-service/__pycache__/
+ml-service/.venv/
+ml-service/venv/
+ml-service/*.pyc
+ml-service/.pytest_cache/
+
+## Jupyter
+ml-service/notebook/.ipynb_checkpoints/
+
+## IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+## OS
+.DS_Store
+Thumbs.db
