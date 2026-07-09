@@ -52,6 +52,22 @@ services:
       - techmind
     restart: unless-stopped
 
+  ml-service:
+    build:
+      context: ./ml-service
+    environment:
+      ML_THRESHOLD: ${ML_THRESHOLD:-0.5}
+      MODEL_VERSION: ${MODEL_VERSION:-v1}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - techmind
+    restart: unless-stopped
+
   terraform:
     image: hashicorp/terraform:1.9
     working_dir: /infra
