@@ -33,9 +33,47 @@ services:
       - techmind
     restart: unless-stopped
 
+  localstack:
+    image: localstack/localstack-pro:latest
+    environment:
+      LOCALSTACK_AUTH_TOKEN: ${LOCALSTACK_AUTH_TOKEN:?token required}
+      AWS_ENDPOINT: ${AWS_ENDPOINT:-http://localstack:4566}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+      SERVICES: s3,secretsmanager,sts
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 15s
+    volumes:
+      - localstack-data:/var/lib/localstack
+    networks:
+      - techmind
+    restart: unless-stopped
+
+  terraform:
+    image: hashicorp/terraform:1.9
+    working_dir: /infra
+    environment:
+      AWS_ACCESS_KEY_ID: mock_access_key
+      AWS_SECRET_ACCESS_KEY: mock_secret_key
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+      LOCALSTACK_ENDPOINT: ${AWS_ENDPOINT:-http://localstack:4566}
+    volumes:
+      - ./infra:/infra
+      - terraform-state:/infra/.terraform
+    networks:
+      - techmind
+    profiles:
+      - tools
+    restart: no
+
 volumes:
   pgdata:
   valkey-data:
+  localstack-data:
+  terraform-state:
 
 networks:
   techmind:
