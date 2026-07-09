@@ -80,5 +80,5 @@ O Rails lê essas credenciais prioritariamente do **Secrets Manager** (secret `t
 | Documento | Conexão |
 |---|---|
 | `.env.example` | Arquivo com valores padrão versionado no repositório |
-| `10-modelo-de-dados.md` | Secret no SM usa as mesmas chaves das variáveis de ambiente |
+| `10-modelo-de-dados.md` | O secret JSON no SM (chaves: `host`, `port`, `username`, `password`, `dbname`) é mapeado para as env vars (`DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`) no código Rails |
 | `02-requisitos-nao-funcionais.md` (RNF07, RNF09) | Secrets e rate limiting |

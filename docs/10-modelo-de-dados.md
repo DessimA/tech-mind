@@ -14,7 +14,7 @@ CREATE TABLE conteudos (
     titulo          VARCHAR(200)    NOT NULL CHECK (char_length(titulo) >= 3),
     texto           TEXT            NOT NULL CHECK (char_length(texto) >= 10 AND char_length(texto) <= 5000),
     categoria       VARCHAR(50),
-    probabilidade   DECIMAL(5,4),
+    probabilidade   DECIMAL(5,4)    CHECK (probabilidade IS NULL OR (probabilidade >= 0 AND probabilidade <= 1)),
     informacoes_adicionais  TEXT[],
     status          status_conteudo NOT NULL DEFAULT 'pending',
     created_at      TIMESTAMPTZ     NOT NULL DEFAULT NOW(),
@@ -135,7 +135,8 @@ A cache é invalidada **apenas ao cadastrar novo conteúdo** (RF01). A janela de
 |---|---|---|---|
 | `pending` | `null` | `null` | `null` |
 | `processing` | `null` | `null` | `null` |
-| `done` | Categoria predita (ex: `"Backend"`) | 0.0000 a 1.0000 | Array de palavras-chave |
+| `done` (threshold atingido) | Categoria predita (ex: `"Backend"`) | 0.0000 a 1.0000 | Array de palavras-chave |
+| `done` (threshold não atingido) | `"Desconhecida"` | < 0.50 (ex: 0.32) | `[]` |
 | `failed` | `null` | `null` | `null` |
 
 ## Secret no Secrets Manager (LocalStack)
@@ -154,7 +155,17 @@ A cache é invalidada **apenas ao cadastrar novo conteúdo** (RF01). A janela de
 }
 ```
 
-O Rails lê este secret no boot. Se o LocalStack estiver indisponível, faz fallback para variáveis de ambiente (ver `10-variaveis-de-ambiente.md`).
+**Mapeamento para variáveis de ambiente (fallback):**
+
+| Chave no JSON | Variável de ambiente |
+|---|---|
+| `host` | `DB_HOST` |
+| `port` | `DB_PORT` |
+| `username` | `DB_USER` |
+| `password` | `DB_PASSWORD` |
+| `dbname` | `DB_NAME` |
+
+O Rails lê este secret no boot (com retry 5×, 2s). Se o LocalStack estiver indisponível, faz fallback para as variáveis de ambiente acima (ver `10-variaveis-de-ambiente.md`).
 
 ## Relacionamento com outros documentos
 
