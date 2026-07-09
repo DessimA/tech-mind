@@ -52,6 +52,89 @@ services:
       - techmind
     restart: unless-stopped
 
+  backend:
+    build:
+      context: ./backend
+    environment:
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_USER: ${DB_USER:-techmind}
+      DB_PASSWORD: ${DB_PASSWORD:-techmind_dev}
+      DB_NAME: ${DB_NAME:-techmind_dev}
+      REDIS_HOST: ${REDIS_HOST:-valkey}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:?required}
+      RAILS_MAX_THREADS: ${RAILS_MAX_THREADS:-5}
+      RAILS_ENV: ${RAILS_ENV:-development}
+      RAILS_LOG_TO_STDOUT: "true"
+      AWS_ENDPOINT: ${AWS_ENDPOINT:-http://localstack:4566}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+      ML_HOST: ml-service
+      ML_PORT: "8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/v1/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks:
+      - techmind
+    restart: unless-stopped
+
+  sidekiq:
+    build:
+      context: ./backend
+    command: ["bundle", "exec", "sidekiq", "-C", "config/sidekiq.yml"]
+    environment:
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_USER: ${DB_USER:-techmind}
+      DB_PASSWORD: ${DB_PASSWORD:-techmind_dev}
+      DB_NAME: ${DB_NAME:-techmind_dev}
+      REDIS_HOST: ${REDIS_HOST:-valkey}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      RAILS_ENV: ${RAILS_ENV:-development}
+      RAILS_LOG_TO_STDOUT: "true"
+      AWS_ENDPOINT: ${AWS_ENDPOINT:-http://localstack:4566}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+      ML_HOST: ml-service
+      ML_PORT: "8000"
+      SIDEKIQ_RETRY_MAX: ${SIDEKIQ_RETRY_MAX:-3}
+      SIDEKIQ_CONCURRENCY: ${SIDEKIQ_CONCURRENCY:-5}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy
+    networks:
+      - techmind
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+    environment:
+      APP_ENV: ${RAILS_ENV:-development}
+      APP_DEBUG: "true"
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_DATABASE: ${DB_NAME:-techmind_dev}
+      DB_USERNAME: ${DB_USER:-techmind}
+      DB_PASSWORD: ${DB_PASSWORD:-techmind_dev}
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_started
+    networks:
+      - techmind
+    restart: unless-stopped
+
   ml-service:
     build:
       context: ./ml-service

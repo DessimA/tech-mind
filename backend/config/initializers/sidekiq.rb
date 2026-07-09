@@ -1,0 +1,11 @@
+Sidekiq.configure_server do |config|
+  config.redis = {
+    url: "redis://#{ENV.fetch('REDIS_HOST', 'valkey')}:#{ENV.fetch('REDIS_PORT', 6379)}/0"
+  }
+end
+
+Sidekiq.configure_client do |config|
+  config.redis = {
+    url: "redis://#{ENV.fetch('REDIS_HOST', 'valkey')}:#{ENV.fetch('REDIS_PORT', 6379)}/0"
+  }
+end
