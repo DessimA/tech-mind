@@ -66,11 +66,31 @@ mindmap
 | Versão | Python 3.11+ |
 | Framework | FastAPI |
 | ML | scikit-learn (LogisticRegression + TF-IDF) |
+| Stopwords PT-BR | NLTK `stopwords.words('portuguese')` |
 | Serialização | joblib |
 | Testes | Pytest |
 | Servidor | Uvicorn via Docker |
 
 **Justificativa:** FastAPI é performático (ASGI), com documentação automática (OpenAPI). scikit-learn é suficiente para classificação de texto com TF-IDF, sem necessidade de deep learning para o MVP. joblib é o formato padrão para serialização de modelos sklearn.
+
+### Taxonomia de Categorias
+
+O modelo será treinado para classificar conteúdos nas seguintes 8 categorias:
+
+| Categoria | Exemplos de conteúdo |
+|---|---|
+| **Backend** | APIs, bancos de dados, servidores, linguagens (Ruby, PHP, Python, Java) |
+| **Frontend** | React, Vue, Angular, CSS, HTML, JavaScript, TypeScript |
+| **DevOps & Infraestrutura** | Docker, Kubernetes, Terraform, CI/CD, cloud, monitoramento |
+| **Dados & ML** | Machine Learning, análise de dados, SQL avançado, estatística |
+| **Mobile** | Android, iOS, React Native, Flutter, Swift, Kotlin |
+| **Segurança** | Criptografia, autenticação, OWASP, boas práticas de segurança |
+| **Arquitetura & Design** | Padrões de projeto, arquitetura de software, microserviços, clean architecture |
+| **Carreira & Soft Skills** | Produtividade, liderança, comunicação, metodologias ágeis |
+
+### Stopwords em Português (PT-BR)
+
+O pipeline de pré-processamento utilizará `nltk.corpus.stopwords.words('portuguese')` para remoção de stopwords. A biblioteca NLTK é leve, bem integrada ao ecossistema scikit-learn, e cobre as stopwords mais comuns da língua portuguesa. Se necessário, a lista será complementada com termos técnicos muito frequentes (ex: "artigo", "tutorial", "guia") que não agregam valor à classificação.
 
 ---
 

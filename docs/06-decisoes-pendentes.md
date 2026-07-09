@@ -19,6 +19,13 @@ Este documento registra as decisões tomadas durante a fase de planejamento, inc
 | 9 | Rate Limiting | 100 req/min/IP | Fechada | Proteção básica contra abuso |
 | 10 | RDS vs PostgreSQL container | PostgreSQL container real | Fechada | Mock de RDS no LocalStack tem limitações; container real é mais confiável |
 | 11 | Paginação | 20 itens/página | Fechada | Padrão aceitável para MVP |
+| 12 | Boot sem depender de Secrets Manager | env vars diretas para DB/Valkey | Fechada | Remove dependência de ordem; serviços críticos sobem sem Terraform |
+| 13 | Sidekiq espera Terraform | `service_completed_successfully` | Fechada | Uma linha de config no docker-compose, sem lógica extra |
+| 14 | Laravel chama Rails | HTTP server-side (sem CORS) | Fechada | Mais simples que chamadas diretas do navegador |
+| 15 | Quem salva no S3 | Apenas Sidekiq | Fechada | Rails não precisa de credenciais AWS no boot |
+| 16 | Taxonomia de categorias | 8 categorias definidas | Fechada | Lista em `05-stacks-e-justificativas.md` |
+| 17 | Stopwords PT-BR | NLTK `stopwords.words('portuguese')` | Fechada | Biblioteca leve e bem integrada ao sklearn |
+| 18 | Campo de saída do ML | `informacoes_adicionais` | Fechada | Nome descritivo e único em todos os documentos |
 
 ```mermaid
 flowchart LR
@@ -68,3 +75,7 @@ flowchart LR
 | Deploy em cloud real | MVP roda apenas localmente via Docker |
 | Monitoramento avançado (Datadog/Grafana) | Logs JSON + health checks são suficientes para o escopo inicial |
 | Pipeline de CI/CD para ML (retreinamento) | Modelo será treinado uma vez no notebook; retreinamento pode vir depois |
+| Índice avançado de busca (GIN/trigram) | Com paginação de 20 itens e escopo MVP, LIKE com índice btree simples já resolve |
+| Invalidar cache ao concluir classificação (não só ao cadastrar) | Janela de até 5 min de status desatualizado, aceitável para MVP |
+| Reprocessamento manual de conteúdo `failed` | Será implementado como UX futura quando houver autenticação |
+| Uso real de segredos do Secrets Manager por algum serviço | Terraform continua criando o secret (RNF07), mas nenhum serviço consome no boot |
