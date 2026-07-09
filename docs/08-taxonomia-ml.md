@@ -18,9 +18,9 @@ O modelo de classificação utilizará as seguintes 8 categorias para classifica
 ## Regras de Classificação
 
 - O modelo Logistic Regression retornará uma probabilidade para cada categoria.
-- A categoria escolhida será a de maior probabilidade, **desde que** a probabilidade seja >= 0.40 (threshold configurável).
+- A categoria escolhida será a de maior probabilidade, **desde que** a probabilidade seja >= 0.50 (threshold configurável via `ML_THRESHOLD`).
 - Se a maior probabilidade for inferior ao threshold, o conteúdo será classificado como **"Desconhecida"**, permitindo revisão manual futura.
-- As palavras-chave retornadas em `informacoes_adicionais` serão os termos com maior peso no vetor TF-IDF para a categoria predita (top 5).
+- As palavras-chave retornadas em `informacoes_adicionais` serão os **top 5 termos com maior peso TF-IDF no texto de entrada** (extração dinâmica, específica do documento).
 
 ## Exemplo
 
@@ -32,8 +32,14 @@ O modelo de classificação utilizará as seguintes 8 categorias para classifica
 }
 ```
 
+## Limitações do MVP
+
+- **Dataset pequeno:** 80 exemplos sintéticos (10 por categoria) — baseline suficiente para validar o fluxo, mas métricas de acurácia serão instáveis em validação cruzada com 5 folds (~2 exemplos/classe/fold). Para produção, recomenda-se expandir para ≥ 100 exemplos por categoria.
+- **Cobertura linguística:** textos sintéticos podem não representar a variedade de estilos de escrita reais. O threshold elevado (0.50) mitiga falsos positivos.
+- **Extração de keywords:** top 5 TF-IDF por documento (dinâmica). Pode incluir ruído em textos muito curtos.
+
 ## Evolução Futura
 
 - A taxonomia pode ser expandida com subcategorias conforme o volume de conteúdos crescer
-- O threshold de 0.40 pode ser ajustado após validação com dados reais
+- O threshold padrão (0.50) pode ser ajustado via `ML_THRESHOLD` após validação com dados reais
 - Novas categorias podem ser adicionadas sem retreinar todo o modelo (apenas as duas classes)

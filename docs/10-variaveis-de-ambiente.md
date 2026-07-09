@@ -45,7 +45,7 @@ O Rails lê essas credenciais prioritariamente do **Secrets Manager** (secret `t
 | Variável | Obrigatória | Valor Padrão | Descrição |
 |---|---|---|---|
 | `ML_THRESHOLD` | Não | `0.5` | Threshold mínimo de probabilidade para classificar; abaixo disso retorna `"Desconhecida"` |
-| `MODEL_VERSION` | Não | `v1` | Versão esperada do modelo `.joblib`; validada no health check |
+| `MODEL_VERSION` | Não | `v1` | Versão esperada do modelo `.joblib`; se o modelo carregado não bater, o `/health` retorna `"modelo_ok": false` e o `/predict` recusa requisições com erro 503 |
 
 ## Rate Limiting
 
