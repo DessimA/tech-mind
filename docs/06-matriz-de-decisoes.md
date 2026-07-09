@@ -53,7 +53,7 @@ flowchart LR
         D18[campo informacoes_adicionais]
         D19[Modelo .joblib versionado]
         D20[Banco de teste isolado]
-        D21[Busca keyword: text[] + GIN]
+        D21["Busca keyword: text[] + GIN"]
         D22[Terraform manual + retry no boot]
     end
 
