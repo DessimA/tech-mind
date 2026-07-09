@@ -8,7 +8,7 @@ Valorizamos a segurança do TechMind. Se você descobrir uma vulnerabilidade de 
 
 ### Processo de Reporte
 
-1. Abra uma issue de segurança no repositório ou entre em contato via [GitHub Security Advisories](https://github.com/DessimA/tech-mind/security/advisories)
+1. Reporte via [GitHub Security Advisories](https://github.com/DessimA/tech-mind/security/advisories) (recurso privado do GitHub, diferente de uma issue pública)
 2. Inclua uma descrição detalhada do problema
 3. Inclua passos para reproduzir a vulnerabilidade
 4. Inclua possível impacto e sugestão de correção (se aplicável)
