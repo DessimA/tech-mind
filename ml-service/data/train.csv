@@ -5,10 +5,10 @@ texto,categoria
 "Criação de endpoints GraphQL em Python com Graphene e Django para consultas flexíveis.",Backend
 "Uso de Docker Compose para orquestrar microsserviços com PostgreSQL, Redis e Nginx.",Backend
 "Implementação de WebSockets em Go para notificações em tempo real no backend.",Backend
-"Cache distribuído com Redis e estratégias de失效 para APIs REST de alto throughput.",Backend
+"Cache distribuído com Redis e estratégias de expiração para APIs REST de alto throughput.",Backend
 "Schema de banco de dados normalizado até 3FN para sistema de e-commerce.",Backend
 "Migrações de banco com Alembic e SQLAlchemy para versionamento do schema em Python.",Backend
-"Rate limiting e throttling em APIs REST com令牌桶算法 para proteção contra abuso.",Backend
+"Rate limiting e throttling em APIs REST com token bucket para proteção contra abuso.",Backend
 "Construção de interfaces responsivas com React, TailwindCSS e componentes reutilizáveis.",Frontend
 "Animações CSS com keyframes e transições para melhorar a experiência do usuário.",Frontend
 "Gerenciamento de estado global com Redux Toolkit em aplicações React de grande escala.",Frontend
