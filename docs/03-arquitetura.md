@@ -149,8 +149,9 @@ sequenceDiagram
 | ML assíncrono | Sidekiq job | Não bloquear o request do usuário; resiliência com retry |
 | ML como serviço separado | FastAPI + scikit-learn | Separação de concerns; permite escalar ML independentemente |
 | Infra mockada | LocalStack Pro | Fidelidade à AWS sem custos; S3 e Secrets Manager funcionais |
-| Rails lê credenciais do SM no boot | Leitura do Secrets Manager com fallback para env vars | Demonstra uso real do SM; fallback garante resiliência em dev/teste |
+| Rails lê credenciais do SM no boot | Leitura do Secrets Manager com retry (5×, 2s) e fallback para env vars | Demonstra uso real do SM; retry permite que o Terraform rode após o Compose sem `depends_on`; fallback garante resiliência em dev/teste |
 | Sidekiq não bloqueia por Terraform | S3 save com rescue; classificação segue sem S3 | Funcionalidade principal não acoplada à infra provisionada |
+| Terraform executado manualmente | `docker compose run --rm terraform apply` após `up -d`, sem `depends_on` | Evita acoplamento entre Compose e Terraform; resiliência via retry (Rails) e try/rescue (Sidekiq) |
 | Laravel → Rails | HTTP server-side (sem CORS) | Mais simples que chamadas diretas do navegador; sem configurar CORS |
 | Quem salva no S3 | Apenas Sidekiq | Rails não precisa de credenciais AWS no boot; responsabilidade única |
 | Nome do campo de saída | `informacoes_adicionais` | Nome descritivo para as palavras-chave extraídas pelo ML |
@@ -192,4 +193,4 @@ flowchart TB
     style SQ fill:#8E24AA,color:#fff,stroke:#fff
 ```
 
-> **Nota sobre o Terraform:** O passo 4 (Terraform apply) é **executado manualmente** via `docker compose run --rm terraform apply` após `docker compose up -d`. Enquanto o Terraform não for executado, o Rails faz fallback para variáveis de ambiente (DB_HOST, DB_USER, etc.) e o Sidekiq trata a ausência do S3 com try/rescue. Não há `depends_on` com `service_completed_successfully` — cada serviço lida com a indisponibilidade de forma resiliente.
+> **Nota sobre o Terraform:** O passo 4 (Terraform apply) é **executado manualmente** via `docker compose run --rm terraform apply` após `docker compose up -d`. Para garantir que o secret seja lido do Secrets Manager mesmo com o Terraform rodando depois do Rails, o boot do Rails implementa **retry com backoff**: até 5 tentativas com 2 segundos de intervalo para ler o secret, antes de cair no fallback para variáveis de ambiente (DB_HOST, DB_USER, etc.). O Sidekiq trata a ausência do S3 com try/rescue. Não há `depends_on` com `service_completed_successfully` — cada serviço lida com a indisponibilidade de forma resiliente.

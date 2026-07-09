@@ -29,6 +29,7 @@ Este documento registra as decisões tomadas durante a fase de planejamento, inc
 | 19 | Versionamento do modelo ML | `.joblib` versionado no repositório | Fechada | Reproducível em CI; health check valida versão esperada |
 | 20 | Banco isolado para testes | `techmind_test` via profile de test no compose | Fechada | Evita que testes apaguem dados de desenvolvimento |
 | 21 | Estratégia de busca por palavra-chave | `text[]` + índice GIN + operador `ANY()` | Fechada | GIN resolve busca em array; `ANY()` é nativo do Postgres |
+| 22 | Execução do Terraform + boot do Rails | Terraform manual (`docker compose run --rm terraform apply`) + retry com backoff no boot do Rails | Fechada | Mantém desacoplamento entre serviços; Rails tenta ler o secret com até 5 tentativas (2s de intervalo) antes de cair no fallback para env vars, garantindo que o Terraform tenha tempo de criar o secret sem exigir `depends_on` |
 
 ```mermaid
 flowchart LR
@@ -53,6 +54,7 @@ flowchart LR
         D19[Modelo .joblib versionado]
         D20[Banco de teste isolado]
         D21[Busca keyword: text[] + GIN]
+        D22[Terraform manual + retry no boot]
     end
 
     subgraph Pos-MVP
@@ -80,6 +82,7 @@ flowchart LR
     style D19 fill:#1B5E20,color:#fff,stroke:#fff
     style D20 fill:#1B5E20,color:#fff,stroke:#fff
     style D21 fill:#1B5E20,color:#fff,stroke:#fff
+    style D22 fill:#1B5E20,color:#fff,stroke:#fff
     style Pos-MVP fill:#4A148C,color:#fff,stroke:#fff
     style D1 fill:#E65100,color:#fff,stroke:#fff
 ```
