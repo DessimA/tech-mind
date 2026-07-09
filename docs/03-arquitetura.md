@@ -4,7 +4,7 @@
 
 ```mermaid
 flowchart LR
-    Usuario[("<b>Usuário</b><br/>Dev/Estudante)"] -->|Interage via navegador| TM[("<b>TechMind System</b><br/>Organização Inteligente<br/>de Conhecimento")]
+    Usuario[("<b>Usuário</b><br/>Dev/Estudante")] -->|Interage via navegador| TM[("<b>TechMind System</b><br/>Organização Inteligente<br/>de Conhecimento")]
 
     style Usuario fill:#4E342E,color:#fff,stroke:#fff,stroke-width:2px
     style TM fill:#1A237E,color:#fff,stroke:#fff,stroke-width:3px
