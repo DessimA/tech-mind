@@ -85,6 +85,31 @@ Detalhes completos de um conteúdo.
 }
 ```
 
+### Erros
+
+Todas as APIs Rails retornam erros no formato padronizado abaixo.
+
+**Response (404 Not Found):**
+
+```json
+{
+  "error": "not_found",
+  "mensagem": "Conteúdo não encontrado"
+}
+```
+
+**Response (422 Unprocessable Entity):**
+
+```json
+{
+  "error": "validation_failed",
+  "mensagem": "Título é obrigatório",
+  "detalhes": {
+    "titulo": ["não pode ficar em branco"]
+  }
+}
+```
+
 ### GET /v1/health
 
 Health check do Rails + dependências.
@@ -181,3 +206,13 @@ O campo `status` no banco e nas respostas da API segue este ciclo:
 | `processing` | Sidekiq worker está processando |
 | `done` | Classificação concluída com sucesso |
 | `failed` | Falha após 3 tentativas de classificação |
+
+Quando `status = "failed"`, os campos `categoria` e `informacoes_adicionais` retornam valores padrão:
+
+```json
+{
+  "categoria": null,
+  "probabilidade": null,
+  "informacoes_adicionais": []
+}
+```
