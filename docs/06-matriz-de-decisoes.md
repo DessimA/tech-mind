@@ -30,6 +30,7 @@ Este documento registra as decisões tomadas durante a fase de planejamento, inc
 | 20 | Banco isolado para testes | `techmind_test` via profile de test no compose | Fechada | Evita que testes apaguem dados de desenvolvimento |
 | 21 | Estratégia de busca por palavra-chave | `text[]` + índice GIN + operador `ANY()` | Fechada | GIN resolve busca em array; `ANY()` é nativo do Postgres |
 | 22 | Execução do Terraform + boot do Rails | Terraform manual (`docker compose run --rm terraform apply`) + retry com backoff no boot do Rails | Fechada | Mantém desacoplamento entre serviços; Rails tenta ler o secret com até 5 tentativas (2s de intervalo) antes de cair no fallback para env vars, garantindo que o Terraform tenha tempo de criar o secret sem exigir `depends_on` |
+| 23 | Mecanismo de versão do modelo ML | `model_metadata.json` (arquivo companheiro do `model.joblib`) | Fechada | JSON simples com `version`, `trained_at`, `categories` e `threshold`; lido no boot do FastAPI para popular `modelo_ok` no `/health` sem alterar a estrutura do Pipeline sklearn |
 
 ```mermaid
 flowchart LR
@@ -55,6 +56,7 @@ flowchart LR
         D20[Banco de teste isolado]
         D21["Busca keyword: text[] + GIN"]
         D22[Terraform manual + retry no boot]
+        D23[Metadata do modelo<br/>em JSON companheiro]
     end
 
     subgraph Pos-MVP
@@ -83,6 +85,7 @@ flowchart LR
     style D20 fill:#1B5E20,color:#fff,stroke:#fff
     style D21 fill:#1B5E20,color:#fff,stroke:#fff
     style D22 fill:#1B5E20,color:#fff,stroke:#fff
+    style D23 fill:#1B5E20,color:#fff,stroke:#fff
     style Pos-MVP fill:#4A148C,color:#fff,stroke:#fff
     style D1 fill:#E65100,color:#fff,stroke:#fff
 ```
