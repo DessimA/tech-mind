@@ -80,7 +80,7 @@ flowchart TB
 
 - **Rails lê credenciais do PostgreSQL do Secrets Manager no boot.** O Terraform deve criar o secret antes do Rails iniciar. Se o LocalStack estiver indisponível, o Rails faz fallback para variáveis de ambiente (`DB_HOST`, `DB_USER`, etc.), garantindo resiliência em cenários de desenvolvimento e teste.
 - **Laravel chama Rails via HTTP server-side** (PHP faz a requisição HTTP para o backend). Sem CORS, sem chamadas diretas do navegador para a API.
-- **Laravel repassa o IP real do cliente** via header `X-Forwarded-For` para que o Rails aplique rate limiting por IP real do usuário (RNF09).
+- **Laravel repassa o IP real do cliente** via header `X-Forwarded-For` para que o Rails aplique rate limiting por IP real do usuário (RNF09). Apenas a porta 80 (Laravel) é exposta no host; as portas 3000 (Rails) e 8000 (FastAPI) são acessíveis exclusivamente na rede interna do Docker, eliminando risco de spoofing externo do header.
 - **Sidekiq não depende do Terraform para subir.** A gravação no S3 é feita com tratamento de exceção (begin/rescue): se o S3 ainda não estiver disponível, o erro é registrado em log e a classificação continua sem bloqueio. O Terraform é executado em paralelo e, quando concluir, o S3 estará disponível para os jobs seguintes.
 - **Rails não salva no S3.** Toda interação com S3 é feita exclusivamente pelo Sidekiq, mantendo a responsabilidade única.
 
@@ -191,3 +191,5 @@ flowchart TB
     style ML fill:#2E7D32,color:#fff,stroke:#fff
     style SQ fill:#8E24AA,color:#fff,stroke:#fff
 ```
+
+> **Nota sobre o Terraform:** O passo 4 (Terraform apply) é **executado manualmente** via `docker compose run --rm terraform apply` após `docker compose up -d`. Enquanto o Terraform não for executado, o Rails faz fallback para variáveis de ambiente (DB_HOST, DB_USER, etc.) e o Sidekiq trata a ausência do S3 com try/rescue. Não há `depends_on` com `service_completed_successfully` — cada serviço lida com a indisponibilidade de forma resiliente.

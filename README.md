@@ -178,9 +178,9 @@ docker compose run --rm terraform init
 docker compose run --rm terraform apply -auto-approve
 
 # 5. Acesse
-# Frontend: http://localhost:80
-# API Rails: http://localhost:3000
-# FastAPI docs: http://localhost:8000/docs
+# Frontend (Laravel): http://localhost:80
+# (portas 3000 e 8000 são acessíveis apenas na rede interna do Docker;
+#  para debug, use: docker compose exec backend curl localhost:3000)
 ```
 
 ---

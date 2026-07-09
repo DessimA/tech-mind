@@ -127,7 +127,7 @@ O pipeline de pré-processamento utilizará `nltk.corpus.stopwords.words('portug
 | Compose | V2 (plugin) |
 | Rede | Bridge interna para comunicação entre serviços |
 
-**Justificativa:** Docker Compose é a ferramenta mais simples e direta para orquestração local. Para um MVP com 7 containers, oferece o equilíbrio ideal entre simplicidade e funcionalidade.
+**Justificativa:** Docker Compose é a ferramenta mais simples e direta para orquestração local. Para um MVP com 8 containers, oferece o equilíbrio ideal entre simplicidade e funcionalidade.
 
 ---
 

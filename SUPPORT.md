@@ -5,12 +5,19 @@
 Consulte a documentação completa em [`docs/`](docs/):
 
 | Documento | Descrição |
-|---|---|
-| [Visão Geral](docs/00-visao-geral.md) | Objetivos e contexto do projeto |
-| [Requisitos Funcionais](docs/01-requisitos-funcionais.md) | Funcionalidades do MVP |
-| [Requisitos Não Funcionais](docs/02-requisitos-nao-funcionais.md) | Performance, segurança, etc |
-| [Arquitetura](docs/03-arquitetura.md) | Diagramas e fluxos |
-| [Stacks e Justificativas](docs/05-stacks-e-justificativas.md) | Tecnologias escolhidas |
+|---|---|---|
+| [00-visao-geral.md](docs/00-visao-geral.md) | Visão geral, objetivos e critérios de sucesso |
+| [01-requisitos-funcionais.md](docs/01-requisitos-funcionais.md) | 6 requisitos funcionais com diagramas |
+| [02-requisitos-nao-funcionais.md](docs/02-requisitos-nao-funcionais.md) | 9 requisitos não funcionais |
+| [03-arquitetura.md](docs/03-arquitetura.md) | Arquitetura C4 com diagramas Mermaid |
+| [04-historias-de-usuario.md](docs/04-historias-de-usuario.md) | 6 histórias de usuário (INVEST) |
+| [05-stacks-e-justificativas.md](docs/05-stacks-e-justificativas.md) | Stacks e justificativas das escolhas |
+| [06-matriz-de-decisoes.md](docs/06-matriz-de-decisoes.md) | Matriz de decisões do projeto |
+| [07-glossario.md](docs/07-glossario.md) | Glossário de termos técnicos |
+| [08-taxonomia-ml.md](docs/08-taxonomia-ml.md) | Taxonomia de categorias do ML |
+| [09-contratos-api.md](docs/09-contratos-api.md) | Contratos formais das APIs (request/response) |
+| [10-modelo-de-dados.md](docs/10-modelo-de-dados.md) | Schema do banco, índices e estratégia de busca |
+| [10-variaveis-de-ambiente.md](docs/10-variaveis-de-ambiente.md) | Variáveis de ambiente do projeto |
 
 ## Dúvidas Frequentes
 

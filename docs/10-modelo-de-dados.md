@@ -127,7 +127,7 @@ chave: conteudos:list:page:{page}:q:{q}:sort:{sort}
 valor: JSON do response paginado
 ```
 
-A cache é invalidada ao cadastrar novo conteúdo (RF01) e ao concluir classificação (quando `status` muda de `processing` para `done` ou `failed`), garantindo que a listagem nunca exiba dados desatualizados por mais de 5 minutos (decisão 22 da matriz).
+A cache é invalidada **apenas ao cadastrar novo conteúdo** (RF01). A janela de até 5 minutos de status desatualizado durante o processamento é aceita como trade-off para o MVP (ver decisão na matriz de decisões).
 
 ## Estados da coluna `categoria` e `informacoes_adicionais`
 
