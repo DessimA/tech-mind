@@ -18,6 +18,8 @@ require "action_view/railtie"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+require_relative "../lib/secrets_manager"
+
 module TechMind
   class Application < Rails::Application
     config.before_configuration do
@@ -28,7 +30,7 @@ module TechMind
         ENV["DB_USER"] ||= creds[:username]
         ENV["DB_PASSWORD"] ||= creds[:password]
         ENV["DB_NAME"] ||= creds[:dbname]
-        Rails.logger.info "SecretsManager: credenciais lidas do Secrets Manager"
+        puts "SecretsManager: credenciais lidas do Secrets Manager"
       end
     end
 
