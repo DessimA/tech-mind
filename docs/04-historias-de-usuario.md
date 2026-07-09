@@ -1,5 +1,7 @@
 # Histórias de Usuário - TechMind
 
+> **Estimativa (P/G/M):** P = Pequena (horas, ~1-2 story points), M = Média (dias, ~3-5 story points), G = Grande (semanas, ~8-13 story points)
+
 ---
 
 ## US01 - Cadastro de Conteúdo
