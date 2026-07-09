@@ -163,17 +163,39 @@ Classifica um texto e retorna categoria, probabilidade e palavras-chave.
 }
 ```
 
+**Response (503 Service Unavailable — modelo com versão divergente ou não carregado):**
+
+```json
+{
+  "error": "model_unavailable",
+  "mensagem": "Modelo indisponível ou versão incorreta. Esperado: v1, carregado: v0"
+}
+```
+
 ### GET /health
 
 Health check do FastAPI + modelo.
 
-**Response (200 OK):**
+**Response (200 OK — modelo OK):**
 
 ```json
 {
   "status": "ok",
   "modelo": "logistic_regression_v1",
   "modelo_carregado": true,
+  "modelo_ok": true,
+  "categorias_disponiveis": ["Backend", "Frontend", "DevOps & Infraestrutura", "Dados & ML", "Mobile", "Segurança", "Arquitetura & Design", "Carreira & Soft Skills"]
+}
+```
+
+**Response (200 OK — modelo com versão divergente):**
+
+```json
+{
+  "status": "ok",
+  "modelo": "logistic_regression_v1",
+  "modelo_carregado": true,
+  "modelo_ok": false,
   "categorias_disponiveis": ["Backend", "Frontend", "DevOps & Infraestrutura", "Dados & ML", "Mobile", "Segurança", "Arquitetura & Design", "Carreira & Soft Skills"]
 }
 ```
