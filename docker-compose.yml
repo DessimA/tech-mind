@@ -34,25 +34,32 @@ services:
     restart: unless-stopped
 
   localstack:
-    image: localstack/localstack-pro:latest
+    image: localstack/localstack:latest
+    container_name: localstack_students
+    ports:
+      - "4566:4566"
+      - "4510-4559:4510-4559"
     environment:
-      LOCALSTACK_AUTH_TOKEN: ${LOCALSTACK_AUTH_TOKEN:?token required}
-      AWS_ENDPOINT: ${AWS_ENDPOINT:-http://localstack:4566}
-      AWS_REGION: ${AWS_REGION:-us-east-1}
-      SERVICES: s3,secretsmanager,sts
+      - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN:?token required}
+      - AWS_ENDPOINT=${AWS_ENDPOINT:-http://localstack:4566}
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      - SERVICES=s3,secretsmanager,sts
+      - EXTRA_CORS_ALLOWED_ORIGINS=https://app.localstack.cloud
+      - GATEWAY_LISTEN=0.0.0.0:4566
+      - DEBUG=1
+      - ENFORCE_IAM=1
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - localstack-data:/var/lib/localstack
+    networks:
+      - techmind
+    restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
       interval: 5s
       timeout: 3s
       retries: 10
       start_period: 15s
-    ports:
-      - "4566:4566"
-    volumes:
-      - localstack-data:/var/lib/localstack
-    networks:
-      - techmind
-    restart: unless-stopped
 
   backend:
     build:
