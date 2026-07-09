@@ -177,6 +177,59 @@ services:
       - tools
     restart: no
 
+  frontend-test:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.test
+    environment:
+      APP_ENV: testing
+      APP_DEBUG: "true"
+      APP_KEY: ${APP_KEY:-base64:4sQxRgHuYqOThy7M8yLOqWI/jtm+JLE9cF7Dzg51MfM=}
+      CACHE_STORE: array
+      SESSION_DRIVER: array
+      QUEUE_CONNECTION: sync
+      RAILS_API_URL: http://backend:3000
+    depends_on:
+      backend:
+        condition: service_started
+    networks:
+      - techmind
+    profiles:
+      - test
+    restart: no
+
+  backend-test:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      RAILS_ENV: test
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_USER: techmind
+      DB_PASSWORD: techmind_dev
+      DB_NAME: techmind_test
+      DB_TEST_NAME: techmind_test
+      REDIS_HOST: valkey
+      REDIS_PORT: "6379"
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:-test-secret-key-base-for-testing}
+      AWS_ENDPOINT: http://localstack:4566
+      AWS_REGION: us-east-1
+      ML_HOST: ml-service
+      ML_PORT: "8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy
+      ml-service:
+        condition: service_healthy
+    networks:
+      - techmind
+    profiles:
+      - test
+    restart: no
+
 volumes:
   pgdata:
   valkey-data:
