@@ -99,7 +99,7 @@ O pipeline de pré-processamento utilizará `nltk.corpus.stopwords.words('portug
 | Aspecto | Detalhe |
 |---|---|
 | Terraform | 1.9+ |
-| LocalStack | Pro (imagem `localstack/localstack-pro`) |
+| LocalStack | Pro (imagem `localstack/localstack` unified) |
 | Serviços | S3, Secrets Manager |
 | Banco real | PostgreSQL 16 (container) |
 

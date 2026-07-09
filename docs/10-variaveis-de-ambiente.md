@@ -7,10 +7,13 @@ Todas as variáveis de ambiente do projeto, agrupadas por serviço. O arquivo `.
 ## LocalStack
 
 | Variável | Obrigatória | Valor Padrão | Descrição |
-|---|---|---|---|
-| `LOCALSTACK_AUTH_TOKEN` | Sim | — | Token de autenticação do LocalStack Pro |
+|---|---|---|---|---|
+| `LOCALSTACK_AUTH_TOKEN` | Sim | — | Token de autenticação do LocalStack |
 | `AWS_ENDPOINT` | Não | `http://localstack:4566` | Endpoint interno do LocalStack na rede Docker |
 | `AWS_REGION` | Não | `us-east-1` | Região AWS mockada |
+| `EXTRA_CORS_ALLOWED_ORIGINS` | Não | `https://app.localstack.cloud` | Origens CORS adicionais para o Web App |
+| `DEBUG` | Não | `1` | Logs detalhados do LocalStack |
+| `ENFORCE_IAM` | Não | `1` | Habilita avaliação e enforcement de políticas IAM |
 
 ## PostgreSQL
 
