@@ -101,10 +101,9 @@ sequenceDiagram
     FE->>BE: POST /v1/conteudos { título, texto }
     BE->>DB: INSERT (status: pending)
     BE->>VK: Invalida cache de listagem
+    BE->>SQ: Enfileira ClassificationJob
     BE-->>FE: 201 Created
     FE-->>U: Feedback visual
-
-    BE->>SQ: Enfileira ClassificationJob
     SQ->>ML: POST /predict { texto }
     ML->>ML: TF-IDF + LogisticRegression
     ML-->>SQ: { categoria, probabilidade, informacoes_adicionais }
