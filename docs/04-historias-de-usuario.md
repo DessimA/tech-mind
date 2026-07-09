@@ -85,7 +85,7 @@ flowchart LR
 **Para** ler o texto completo e ver a classificação atribuída
 
 **Critérios de Aceitação:**
-- A página de detalhes exibe título, texto completo, categoria, probabilidade e keywords
+- A página de detalhes exibe título, texto completo, categoria, probabilidade e palavras-chave
 - Mostra data de criação e status do processamento
 - Se ainda estiver processando, mostra indicador visual
 
@@ -134,7 +134,7 @@ flowchart LR
 ## US06 - Pipeline de ML Funcional
 
 **Como** desenvolvedor do projeto
-**Quero** que o endpoint `/predict` do FastAPI retorne categoria e keywords
+**Quero** que o endpoint `/predict` do FastAPI retorne categoria e palavras-chave
 **Para** que o Rails possa classificar os conteúdos
 
 **Critérios de Aceitação:**
@@ -150,7 +150,7 @@ flowchart LR
     C --> D[Vetorização TF-IDF]
     D --> E[Predição com<br/>LogisticRegression]
     E --> F{Probabilidade<br/>> threshold?}
-    F -->|Sim| G[Retorna categoria + keywords]
+    F -->|Sim| G[Retorna categoria + palavras-chave]
     F -->|Não| H[Retorna 'desconhecida']
 
     style A fill:#37474F,color:#fff,stroke:#fff

@@ -43,7 +43,7 @@ sequenceDiagram
     Note over Sidekiq: Processamento assíncrono
     Sidekiq->>FastAPI: POST /predict { texto }
     FastAPI->>FastAPI: Classifica com TF-IDF + LogisticRegression
-    FastAPI-->>Sidekiq: { categoria, probabilidade, keywords }
+    FastAPI-->>Sidekiq: { categoria, probabilidade, informacoes_adicionais }
     Sidekiq->>DB: Atualiza registro (status: done)
 ```
 

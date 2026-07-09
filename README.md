@@ -71,7 +71,7 @@ sequenceDiagram
     BE-->>FE: 201 Created
     BE->>SQ: Enfileira ClassificationJob
     SQ->>ML: POST /predict { texto }
-    ML-->>SQ: { categoria, probabilidade, keywords }
+    ML-->>SQ: { categoria, probabilidade, informacoes_adicionais }
     SQ->>DB: Atualiza status: done
 ```
 
@@ -137,7 +137,9 @@ tech-mind/
     ├── 04-historias-de-usuario.md
     ├── 05-stacks-e-justificativas.md
     ├── 06-decisoes-pendentes.md
-    └── 07-glossario.md
+    ├── 07-glossario.md
+    ├── 08-taxonomia-ml.md
+    └── 09-contratos-api.md
 ```
 
 ---
@@ -191,6 +193,8 @@ Documentação completa disponível em [`docs/`](docs/):
 | [05-stacks-e-justificativas.md](docs/05-stacks-e-justificativas.md) | Stacks e justificativas das escolhas |
 | [06-decisoes-pendentes.md](docs/06-decisoes-pendentes.md) | Matriz de decisões do projeto |
 | [07-glossario.md](docs/07-glossario.md) | Glossário de termos técnicos |
+| [08-taxonomia-ml.md](docs/08-taxonomia-ml.md) | Taxonomia de categorias do ML |
+| [09-contratos-api.md](docs/09-contratos-api.md) | Contratos formais das APIs (request/response) |
 
 ---
 
