@@ -14,6 +14,7 @@ infra/.terraform/
 infra/terraform.tfstate
 infra/terraform.tfstate.backup
 infra/*.tfplan
+*.tfvars
 
 ## Ruby / Rails
 backend/vendor/
@@ -28,6 +29,7 @@ frontend/vendor/
 frontend/node_modules/
 frontend/.env
 frontend/.env.backup
+frontend/storage/logs/
 frontend/storage/framework/cache/data/
 frontend/storage/framework/sessions/
 frontend/storage/framework/views/

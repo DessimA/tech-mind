@@ -29,7 +29,7 @@ Ao participar deste projeto, você concorda em seguir o [Código de Conduta](COD
 4. Adicione testes para sua alteração
 5. Execute os testes localmente via Docker:
    ```bash
-   docker compose --profile test up --abort-on-container-exit
+docker compose --profile test up --abort-on-container-exit
    ```
 6. Commit com mensagem clara e concisa:
    ```

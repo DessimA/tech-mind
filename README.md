@@ -136,7 +136,7 @@ tech-mind/
     ├── 03-arquitetura.md
     ├── 04-historias-de-usuario.md
     ├── 05-stacks-e-justificativas.md
-    ├── 06-decisoes-pendentes.md
+    ├── 06-matriz-de-decisoes.md
     ├── 07-glossario.md
     ├── 08-taxonomia-ml.md
     └── 09-contratos-api.md
@@ -191,7 +191,7 @@ Documentação completa disponível em [`docs/`](docs/):
 | [03-arquitetura.md](docs/03-arquitetura.md) | Arquitetura C4 com diagramas Mermaid |
 | [04-historias-de-usuario.md](docs/04-historias-de-usuario.md) | 6 histórias de usuário (INVEST) |
 | [05-stacks-e-justificativas.md](docs/05-stacks-e-justificativas.md) | Stacks e justificativas das escolhas |
-| [06-decisoes-pendentes.md](docs/06-decisoes-pendentes.md) | Matriz de decisões do projeto |
+| [06-matriz-de-decisoes.md](docs/06-matriz-de-decisoes.md) | Matriz de decisões do projeto |
 | [07-glossario.md](docs/07-glossario.md) | Glossário de termos técnicos |
 | [08-taxonomia-ml.md](docs/08-taxonomia-ml.md) | Taxonomia de categorias do ML |
 | [09-contratos-api.md](docs/09-contratos-api.md) | Contratos formais das APIs (request/response) |
@@ -202,7 +202,7 @@ Documentação completa disponível em [`docs/`](docs/):
 
 ```bash
 # Rodar testes de todos os serviços
-docker compose --profile test up
+docker compose --profile test up --abort-on-container-exit
 ```
 
 Frameworks: PHPUnit (Laravel), RSpec + FactoryBot (Rails), Pytest (FastAPI).
