@@ -1,3 +1,5 @@
+$PROCESS_START_TIME = Time.current
+
 class HealthController < ApplicationController
   def show
     db_status = database_ok? ? "ok" : "error"
@@ -7,7 +9,7 @@ class HealthController < ApplicationController
       status: "ok",
       database: db_status,
       sidekiq: sidekiq_status,
-      uptime: (Time.current - Process.clock_gettime(Process::CLOCK_MONOTONIC)).to_i
+      uptime: (Time.current - $PROCESS_START_TIME).to_i
     }
   end
 
