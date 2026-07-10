@@ -8,6 +8,8 @@ class ClassificationJob
 
     conteudo.update!(status: "processing")
 
+    S3Writer.upload_texto(conteudo.id, conteudo.titulo, conteudo.texto)
+
     ml_host = ENV.fetch("ML_HOST", "ml-service")
     ml_port = ENV.fetch("ML_PORT", "8000")
     uri = URI("http://#{ml_host}:#{ml_port}/predict")

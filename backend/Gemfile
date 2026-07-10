@@ -9,6 +9,9 @@ gem "sidekiq", "~> 7.0"
 gem "redis", "~> 5.0"
 gem "rack-cors"
 gem "kaminari"
+gem "rack-attack"
+gem "aws-sdk-secretsmanager"
+gem "aws-sdk-s3"
 
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
