@@ -11,6 +11,9 @@ RSpec.describe ClassificationJob, type: :job do
         body: { categoria: "Backend", probabilidade: 0.85, informacoes_adicionais: ["ruby"] }.to_json,
         headers: { "Content-Type" => "application/json" }
       )
+
+    stub_request(:put, /localstack:4566\/techmind-content/)
+      .to_return(status: 200, body: "", headers: {})
   end
 
   it "processa e atualiza status para done" do
