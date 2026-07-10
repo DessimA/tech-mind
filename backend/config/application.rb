@@ -23,14 +23,18 @@ require_relative "../lib/secrets_manager"
 module TechMind
   class Application < Rails::Application
     config.before_configuration do
-      creds = SecretsManager.read_db_credentials
-      if creds
-        ENV["DB_HOST"] ||= creds[:host]
-        ENV["DB_PORT"] ||= creds[:port]
-        ENV["DB_USER"] ||= creds[:username]
-        ENV["DB_PASSWORD"] ||= creds[:password]
-        ENV["DB_NAME"] ||= creds[:dbname]
-        puts "SecretsManager: credenciais lidas do Secrets Manager"
+      if ENV["DB_HOST"].present?
+        puts "SecretsManager: usando env vars (ignorando Secrets Manager)"
+      else
+        creds = SecretsManager.read_db_credentials
+        if creds
+          ENV["DB_HOST"] ||= creds[:host]
+          ENV["DB_PORT"] ||= creds[:port]
+          ENV["DB_USER"] ||= creds[:username]
+          ENV["DB_PASSWORD"] ||= creds[:password]
+          ENV["DB_NAME"] ||= creds[:dbname]
+          puts "SecretsManager: credenciais lidas do Secrets Manager"
+        end
       end
     end
 
