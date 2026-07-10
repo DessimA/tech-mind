@@ -41,8 +41,8 @@ class ConteudoController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'titulo' => 'required|string|max:255',
-            'texto' => 'required|string',
+            'titulo' => 'required|string|min:3|max:200',
+            'texto' => 'required|string|min:10|max:5000',
         ]);
 
         $response = Http::post("{$this->apiUrl}/v1/conteudos", $validated);
