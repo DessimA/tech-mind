@@ -23,8 +23,12 @@ Rails.application.configure do
     config.action_controller.perform_caching = false
   end
 
-  # Change to :null_store to avoid any caching.
-  config.cache_store = :memory_store
+  # Cache via Valkey (Redis OSS).
+  config.cache_store = :redis_cache_store, {
+    url: "redis://#{ENV.fetch('REDIS_HOST', 'valkey')}:#{ENV.fetch('REDIS_PORT', '6379')}/1",
+    expires_in: ENV.fetch("CACHE_TTL", 300).to_i.seconds,
+    namespace: "techmind:cache"
+  }
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
@@ -58,4 +62,7 @@ Rails.application.configure do
 
   # Permitir requests do frontend via nome do container.
   config.hosts << "backend"
+
+  # Rate limiting.
+  config.middleware.use Rack::Attack
 end

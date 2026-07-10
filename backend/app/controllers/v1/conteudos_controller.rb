@@ -6,17 +6,26 @@ module V1
     def index
       page = (params[:page] || 1).to_i.clamp(1, 999)
       per_page = [(params[:per_page] || 20).to_i, 100].min
+      cache_key = "conteudos:list:page:#{page}:per:#{per_page}:q:#{params[:q]}"
+
+      cached = Rails.cache.read(cache_key)
+      if cached
+        return render json: cached
+      end
 
       conteudos = Conteudo.order(created_at: :desc)
       q = params[:q]&.strip
       if q.present?
-        conteudos = conteudos.where("titulo ILIKE ?", "%#{q}%")
+        conteudos = conteudos.where(
+          "titulo ILIKE ? OR ? = ANY(informacoes_adicionais)",
+          "%#{q}%", q
+        )
       end
 
       paginated = conteudos.page(page).per(per_page)
       total = conteudos.count
 
-      render json: {
+      result = {
         data: paginated.map { |c| list_item(c) },
         meta: {
           current_page: page,
@@ -25,6 +34,9 @@ module V1
           per_page: per_page
         }
       }
+
+      Rails.cache.write(cache_key, result, expires_in: ENV.fetch("CACHE_TTL", 300).to_i)
+      render json: result
     end
 
     def show
