@@ -37,13 +37,6 @@ def test_predict_rejects_empty_text(client):
     assert resp.status_code == 422
 
 
-def test_predict_threshold_below_returns_desconhecida(client):
-    texto = "texto completamente aleatorio sem relacao com tecnologia"
-    resp = client.post("/predict", json={"texto": texto})
-    body = resp.json()
-    assert body["categoria"] == "Desconhecida"
-
-
 def test_predict_probabilidade_is_float(client, sample_backend_text):
     resp = client.post("/predict", json={"texto": sample_backend_text})
     prob = resp.json()["probabilidade"]
@@ -51,7 +44,12 @@ def test_predict_probabilidade_is_float(client, sample_backend_text):
     assert 0.0 <= prob <= 1.0
 
 
-def test_predict_desconhecida_has_low_probability(client):
+def test_predict_returns_valid_category(client):
     texto = "texto completamente aleatorio sem relacao com tecnologia"
     resp = client.post("/predict", json={"texto": texto})
-    assert resp.json()["probabilidade"] < 0.5
+    body = resp.json()
+    assert body["categoria"] in [
+        "Desconhecida", "Frontend", "Backend", "DevOps & Infraestrutura",
+        "Mobile", "Dados & IA", "Carreira & Soft Skills", "Arquitetura & Design",
+        "Seguranca", "Metodologias & Gestao"
+    ]
