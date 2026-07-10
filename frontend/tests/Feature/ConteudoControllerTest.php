@@ -130,6 +130,7 @@ class ConteudoControllerTest extends TestCase
         ]);
 
         $response = $this->get(route('conteudos.index'));
-        $response->assertSessionHas('error');
+        $response->assertOk();
+        $response->assertSee('Erro ao carregar conteúdos');
     }
 }

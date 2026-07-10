@@ -23,7 +23,10 @@ class ConteudoController extends Controller
         ]);
 
         if ($response->failed()) {
-            return back()->with('error', 'Erro ao carregar conteúdos.');
+            return view('conteudos.index', [
+                'conteudos' => [], 'meta' => [],
+                'error' => 'Erro ao carregar conteúdos do servidor.'
+            ]);
         }
 
         $body = $response->json();

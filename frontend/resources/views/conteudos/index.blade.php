@@ -10,6 +10,12 @@
         </a>
     </div>
 
+    @if (!empty($error))
+        <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+            {{ $error }}
+        </div>
+    @endif
+
     @if (empty($conteudos))
         <div class="text-center py-12 bg-white rounded-lg border border-gray-200">
             <p class="text-gray-500">Nenhum conteúdo cadastrado ainda.</p>
