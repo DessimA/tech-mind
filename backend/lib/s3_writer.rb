@@ -25,8 +25,8 @@ module S3Writer
     )
 
     key
-  rescue Aws::Errors::ServiceError => e
-    Rails.logger.warn "S3Writer: falha ao enviar texto #{conteudo_id} (#{e.message})"
+  rescue StandardError => e
+    Rails.logger.warn "S3Writer: falha ao enviar texto #{conteudo_id} (#{e.class}: #{e.message})"
     nil
   end
 end

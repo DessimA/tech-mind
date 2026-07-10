@@ -11,7 +11,7 @@ mindmap
       Predis
     Backend
       Ruby 3.3
-      Rails 7.1 API
+      Rails 8.1 API
       Sidekiq
       RSpec
       ActiveRecord
@@ -44,11 +44,11 @@ mindmap
 
 ---
 
-## Backend: Ruby 3.x + Rails 7 (API Mode)
+## Backend: Ruby 3.x + Rails 8 (API Mode)
 
 | Aspecto | Detalhe |
 |---|---|
-| Versão | Ruby 3.3+, Rails 7.1+ |
+| Versão | Ruby 3.3+, Rails 8.1+ |
 | Servidor | Puma via Docker |
 | Testes | RSpec + FactoryBot |
 | Cache | `redis-rb` + Valkey |
@@ -145,7 +145,7 @@ flowchart TB
 
     subgraph Backend
         RUBY[Ruby 3.3]
-        RAILS[Rails 7.1]
+        RAILS[Rails 8.1]
         SIDEKIQ[Sidekiq]
         RSPEC[RSpec]
         AR[ActiveRecord]

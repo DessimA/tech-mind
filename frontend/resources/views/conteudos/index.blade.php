@@ -10,6 +10,19 @@
         </a>
     </div>
 
+    <form method="GET" action="{{ route('conteudos.index') }}" class="mb-6 flex gap-2">
+        <input type="text" name="q" value="{{ request('q') }}" placeholder="Buscar por título ou palavra-chave..."
+               class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-indigo-500 focus:border-indigo-500">
+        <select name="sort" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-indigo-500 focus:border-indigo-500">
+            <option value="created_at_desc" @selected(request('sort') === 'created_at_desc')>Mais recentes</option>
+            <option value="created_at_asc" @selected(request('sort') === 'created_at_asc')>Mais antigos</option>
+            <option value="titulo_asc" @selected(request('sort') === 'titulo_asc')>Título A-Z</option>
+        </select>
+        <button type="submit" class="px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-200">
+            Buscar
+        </button>
+    </form>
+
     @if (!empty($error))
         <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
             {{ $error }}

@@ -3,7 +3,7 @@
 ![PHP](https://img.shields.io/badge/PHP-8.3-777BB4?style=flat&logo=php&logoColor=white)
 ![Laravel](https://img.shields.io/badge/Laravel-11-FF2D20?style=flat&logo=laravel&logoColor=white)
 ![Ruby](https://img.shields.io/badge/Ruby-3.3-CC342D?style=flat&logo=ruby&logoColor=white)
-![Rails](https://img.shields.io/badge/Rails-7.1-D30001?style=flat&logo=rubyonrails&logoColor=white)
+![Rails](https://img.shields.io/badge/Rails-8.1-D30001?style=flat&logo=rubyonrails&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=flat&logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white)
 ![scikit--learn](https://img.shields.io/badge/scikit--learn-F7931E?style=flat&logo=scikitlearn&logoColor=white)
@@ -42,7 +42,7 @@ flowchart LR
 | Componente | Tecnologia | Função |
 |---|---|---|
 | **Frontend** | PHP 8.3 + Laravel 11 | Interface do usuário |
-| **Backend** | Ruby 3.3 + Rails 7.1 (API) | Core de negócio, orquestração |
+| **Backend** | Ruby 3.3 + Rails 8.1 (API) | Core de negócio, orquestração |
 | **ML Service** | Python 3.11 + FastAPI + scikit-learn | Classificação de texto (TF-IDF + LogisticRegression) |
 | **Cache** | Valkey 8 | Cache de queries + backend Sidekiq |
 | **Fila** | Sidekiq (via Valkey) | Processamento assíncrono de classificação |

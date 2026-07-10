@@ -6,18 +6,23 @@ module V1
     def index
       page = (params[:page] || 1).to_i.clamp(1, 999)
       per_page = [(params[:per_page] || 20).to_i, 100].min
-      cache_key = "conteudos:list:page:#{page}:per:#{per_page}:q:#{params[:q]}"
+      cache_key = "conteudos:list:page:#{page}:per:#{per_page}:q:#{params[:q]}:sort:#{params[:sort]}"
 
       cached = Rails.cache.read(cache_key)
       if cached
         return render json: cached
       end
 
-      conteudos = Conteudo.order(created_at: :desc)
+      order_clause = case params[:sort]
+      when "created_at_asc" then { created_at: :asc }
+      when "titulo_asc" then { titulo: :asc }
+      else { created_at: :desc }
+      end
+      conteudos = Conteudo.order(order_clause)
       q = params[:q]&.strip
       if q.present?
         conteudos = conteudos.where(
-          "titulo ILIKE ? OR ? = ANY(informacoes_adicionais)",
+          "titulo ILIKE ? OR informacoes_adicionais @> ARRAY[?]::text[]",
           "%#{q}%", q
         )
       end

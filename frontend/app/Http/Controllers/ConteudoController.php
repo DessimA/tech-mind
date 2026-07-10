@@ -17,9 +17,13 @@ class ConteudoController extends Controller
     public function index(Request $request)
     {
         $page = $request->get('page', 1);
-        $response = Http::get("{$this->apiUrl}/v1/conteudos", [
+        $response = Http::withHeaders([
+            'X-Forwarded-For' => $request->ip(),
+        ])->get("{$this->apiUrl}/v1/conteudos", [
             'page' => $page,
             'per_page' => 20,
+            'q' => $request->get('q'),
+            'sort' => $request->get('sort', 'created_at_desc'),
         ]);
 
         if ($response->failed()) {
@@ -48,7 +52,9 @@ class ConteudoController extends Controller
             'texto' => 'required|string|min:10|max:5000',
         ]);
 
-        $response = Http::post("{$this->apiUrl}/v1/conteudos", $validated);
+        $response = Http::withHeaders([
+            'X-Forwarded-For' => $request->ip(),
+        ])->post("{$this->apiUrl}/v1/conteudos", $validated);
 
         if ($response->failed()) {
             return back()
@@ -63,9 +69,11 @@ class ConteudoController extends Controller
             ->with('success', 'Conteúdo cadastrado! A classificação está sendo processada.');
     }
 
-    public function show(int $id)
+    public function show(int $id, Request $request)
     {
-        $response = Http::get("{$this->apiUrl}/v1/conteudos/{$id}");
+        $response = Http::withHeaders([
+            'X-Forwarded-For' => $request->ip(),
+        ])->get("{$this->apiUrl}/v1/conteudos/{$id}");
 
         if ($response->failed()) {
             return redirect()

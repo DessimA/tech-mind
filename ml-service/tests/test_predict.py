@@ -50,6 +50,6 @@ def test_predict_returns_valid_category(client):
     body = resp.json()
     assert body["categoria"] in [
         "Desconhecida", "Frontend", "Backend", "DevOps & Infraestrutura",
-        "Mobile", "Dados & IA", "Carreira & Soft Skills", "Arquitetura & Design",
-        "Seguranca", "Metodologias & Gestao"
+        "Mobile", "Dados & ML", "Carreira & Soft Skills", "Arquitetura & Design",
+        "Segurança"
     ]

@@ -8,8 +8,6 @@ class ClassificationJob
 
     conteudo.update!(status: "processing")
 
-    S3Writer.upload_texto(conteudo.id, conteudo.titulo, conteudo.texto)
-
     ml_host = ENV.fetch("ML_HOST", "ml-service")
     ml_port = ENV.fetch("ML_PORT", "8000")
     uri = URI("http://#{ml_host}:#{ml_port}/predict")
@@ -32,6 +30,7 @@ class ClassificationJob
         informacoes_adicionais: result["informacoes_adicionais"],
         status: "done"
       )
+      S3Writer.upload_texto(conteudo.id, conteudo.titulo, conteudo.texto)
     elsif response.code.to_i == 503
       fail!(conteudo, "Modelo ML indisponível")
     else
