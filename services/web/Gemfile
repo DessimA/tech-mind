@@ -10,6 +10,7 @@ gem "bootsnap", require: false
 gem "redis", "~> 5.0"
 gem "kaminari"
 gem "rack-attack"
+gem "bcrypt", "~> 3.1"
 
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
