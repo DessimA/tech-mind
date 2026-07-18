@@ -1,191 +1,98 @@
 # Requisitos Não Funcionais - TechMind
 
-## RNF01 - Ambiente 100% Conteinerizado
+## RNF01 - Ambiente Conteinerizado (desenvolvimento local)
 
-**Descrição:** Todos os serviços devem rodar exclusivamente via Docker, sem instalação de dependências no host.
-
-**Critérios de Aceitação:**
-- Um único comando (`docker compose up`) deve iniciar todo o ecossistema
-- Nenhuma instalação de Ruby, PHP, Python ou PostgreSQL é necessária na máquina host
-- Volumes montados devem permitir hot reload em desenvolvimento
-
-```mermaid
-flowchart LR
-    subgraph Host [Máquina Host - Nenhuma dependência instalada]
-        Docker[Docker Engine]
-    end
-
-    subgraph Compose [Docker Compose]
-        direction TB
-        LS[LocalStack Pro]
-        PG[PostgreSQL]
-        VK[Valkey]
-        ML[FastAPI - ML]
-        BE[Rails - Backend]
-        SQ[Sidekiq - Workers]
-        FE[Laravel - Frontend]
-        TF[Terraform]
-    end
-
-    Host --> Compose
-
-    style Host fill:#3E2723,color:#fff,stroke:#fff
-    style Docker fill:#455A64,color:#fff,stroke:#fff
-    style Compose fill:#1A237E,color:#fff,stroke:#fff
-    style LS fill:#00838F,color:#fff,stroke:#fff
-    style PG fill:#0D47A1,color:#fff,stroke:#fff
-    style VK fill:#E65100,color:#fff,stroke:#fff
-    style ML fill:#2E7D32,color:#fff,stroke:#fff
-    style BE fill:#6A1B9A,color:#fff,stroke:#fff
-    style SQ fill:#8E24AA,color:#fff,stroke:#fff
-    style FE fill:#1565C0,color:#fff,stroke:#fff
-    style TF fill:#37474F,color:#fff,stroke:#fff
-```
-
-## RNF02 - Infraestrutura como Código (IaC)
-
-**Descrição:** Todos os recursos de infraestrutura devem ser declarados via Terraform.
+**Descrição:** Em desenvolvimento local, todos os serviços rodam via Docker.
 
 **Critérios de Aceitação:**
-- Provisionamento idempotente (terraform apply pode ser executado múltiplas vezes)
-- Estado do Terraform armazenado localmente (backend local)
-- Recursos AWS simulados via LocalStack Pro
+- `docker compose up` inicia todo o ecossistema
+- Nenhuma instalação de Ruby, Python ou PostgreSQL na máquina host
+- Volumes montados permitem hot reload
+
+## RNF02 - Deploy em Cloud Gratuita (2 Serviços)
+
+**Descrição:** O sistema usa exclusivamente free tiers, com apenas 2 serviços web.
+
+**Critérios de Aceitação:**
+- **Rails 8 full-stack** como web service no Render (512MB RAM, free tier)
+- **FastAPI** como web service no Render (512MB RAM, free tier)
+- PostgreSQL via Supabase (500MB gratuitos, sem expiração)
+- Redis via Redis Cloud (30MB gratuitos) ou cache em memória
+- Groq API gratuita para fallback de classificação
+- Custo total de hospedagem: R$ 0/mês
 
 ## RNF03 - Observabilidade
 
-**Descrição:** O sistema deve expor health checks e logs estruturados.
+**Descrição:** O sistema deve expor health checks e logs.
 
 **Critérios de Aceitação:**
-- Endpoints `/health` em todos os serviços
-- Logs em formato JSON em produção
-- Métricas básicas de requests e erros em cada serviço
-
-```mermaid
-flowchart LR
-    subgraph Serviços
-        FE[Frontend<br/>GET /health]
-        BE[Backend<br/>GET /v1/health]
-        ML[ML Service<br/>GET /health]
-    end
-
-    subgraph Observabilidade
-        LOG[Logs JSON]
-        HC[Health Checks]
-        MET[Métricas]
-    end
-
-    FE --> HC
-    BE --> HC
-    ML --> HC
-    FE --> LOG
-    BE --> LOG
-    ML --> LOG
-    FE --> MET
-    BE --> MET
-    ML --> MET
-
-    style Serviços fill:#1A237E,color:#fff,stroke:#fff
-    style FE fill:#1565C0,color:#fff,stroke:#fff
-    style BE fill:#6A1B9A,color:#fff,stroke:#fff
-    style ML fill:#2E7D32,color:#fff,stroke:#fff
-    style Observabilidade fill:#263238,color:#fff,stroke:#fff
-    style LOG fill:#00838F,color:#fff,stroke:#fff
-    style HC fill:#37474F,color:#fff,stroke:#fff
-    style MET fill:#E65100,color:#fff,stroke:#fff
-```
+- Rails: `GET /health` com status do banco e Redis
+- FastAPI: `GET /health` com status do modelo e Groq
+- Logs em JSON em produção
 
 ## RNF04 - Performance e Cache
 
-**Descrição:** Consultas frequentes devem ser otimizadas com cache.
+**Descrição:** Consultas frequentes otimizadas com cache.
 
 **Critérios de Aceitação:**
-- Listagens paginadas comuns devem ser cacheadas no Valkey (TTL configurável)
-- O cache deve ser invalidado ao cadastrar novo conteúdo
-- Tempo de resposta para listagens cacheadas < 50ms
+- Listagens cacheadas (Redis ou memória)
+- Cache invalidado ao cadastrar novo conteúdo
+- Tempo de resposta cacheados < 50ms
 
-## RNF05 - Resiliência e Filas
+## RNF05 - Resiliência
 
-**Descrição:** Processamento assíncrono com tolerância a falhas.
+**Descrição:** Tolerância a falhas nos serviços.
 
 **Critérios de Aceitação:**
-- Jobs com falha devem ser retentados automaticamente (max 3 tentativas)
-- Falhas persistentes devem marcar o conteúdo como `failed` no banco
-- O Sidekiq deve ser configurado com backoff exponencial
+- Se ML falha, conteúdo salvo como `failed` (dados não perdidos)
+- Se Groq falha, ML retorna "Desconhecida"
+- Se Redis falha, Rails usa cache em memória
+- **Timeout ML: 8s** — não trava o request do usuário
+- **Pool DB: 1** — respeita limite de 2 conexões do Supabase free tier
 
 ## RNF06 - Testes Automatizados
 
-**Descrição:** Cada serviço deve conter testes automatizados.
+**Descrição:** Testes em cada serviço.
 
 **Critérios de Aceitação:**
-- Laravel: testes com PHPUnit cobrindo controllers e services
-- Rails: testes com RSpec cobrindo models, controllers e workers
-- FastAPI: testes com Pytest cobrindo rotas e pipeline de ML
-- Testes devem rodar em container separado (profile de test)
-
-```mermaid
-flowchart TD
-    subgraph Testes
-        PHPUnit[PHPUnit - Laravel]
-        RSpec[RSpec - Rails]
-        Pytest[Pytest - FastAPI]
-    end
-
-    subgraph Cobertura
-        C1[Controllers]
-        C2[Services]
-        C3[Models]
-        C4[Workers/Sidekiq]
-        C5[Rotas API]
-        C6[Pipeline ML]
-    end
-
-    PHPUnit --> C1
-    PHPUnit --> C2
-    RSpec --> C1
-    RSpec --> C3
-    RSpec --> C4
-    Pytest --> C5
-    Pytest --> C6
-
-    style Testes fill:#1A237E,color:#fff,stroke:#fff
-    style PHPUnit fill:#1565C0,color:#fff,stroke:#fff
-    style RSpec fill:#6A1B9A,color:#fff,stroke:#fff
-    style Pytest fill:#2E7D32,color:#fff,stroke:#fff
-    style Cobertura fill:#263238,color:#fff,stroke:#fff
-    style C1 fill:#37474F,color:#fff,stroke:#fff
-    style C2 fill:#37474F,color:#fff,stroke:#fff
-    style C3 fill:#37474F,color:#fff,stroke:#fff
-    style C4 fill:#37474F,color:#fff,stroke:#fff
-    style C5 fill:#37474F,color:#fff,stroke:#fff
-    style C6 fill:#37474F,color:#fff,stroke:#fff
-```
+- Rails: RSpec (models, controllers, auth, views)
+- FastAPI: Pytest (rotas, pipeline ML, fallback Groq mockado)
 
 ## RNF07 - Segurança
 
-**Descrição:** Secrets e credenciais gerenciados via AWS Secrets Manager (LocalStack).
+**Descrição:** Senhas hasheadas (bcrypt), sessão criptografada.
 
 **Critérios de Aceitação:**
-- Nenhuma credencial hardcoded nos arquivos de configuração
-- Secrets armazenados no LocalStack Secrets Manager
-- Conexões entre serviços ocorrem na rede interna do Docker
-- O Rails deve ler as credenciais do PostgreSQL do Secrets Manager no boot, com retry (5 tentativas, intervalo de 2s) e fallback para variáveis de ambiente em caso de indisponibilidade do LocalStack ou do secret
-- O Terraform é executado manualmente após o `docker compose up -d`; o retry no boot do Rails garante que o secret seja lido assim que estiver disponível, sem exigir `depends_on` entre serviços
+- Senhas com bcrypt via `has_secure_password`
+- Sessão Rails em cookie criptografado (SESSION_DRIVER=cookie no Render)
+- `SECRET_KEY_BASE` configurado como variável de ambiente
+- Nenhuma credencial hardcoded
+- Chave Groq API via `GROQ_API_KEY`
 
 ## RNF08 - Versionamento de API
 
-**Descrição:** A API do backend (Rails) deve ser versionada.
-
-**Critérios de Aceitação:**
-- Todos os endpoints sob prefixo `/v1/`
-- Mudanças futuras podem coexistir com versões anteriores via `/v2/`
+**Descrição:** Endpoints da API prefixados com `/v1/` (para consumo do ML Service e futuros clientes).
 
 ## RNF09 - Rate Limiting
 
-**Descrição:** A API deve ter proteção contra abuso.
+**Descrição:** Proteção contra abuso.
 
 **Critérios de Aceitação:**
-- Limite de 100 requests/minuto por IP real do cliente nos endpoints do Rails
-- O Laravel deve repassar o IP real do cliente via header `X-Forwarded-For`
-- O Rails deve confiar no header `X-Forwarded-For` apenas por estar acessível exclusivamente na rede interna do Docker (sem risco de spoofing externo)
-- Resposta 429 Too Many Requests ao exceder o limite
-- Rate limit configurável via variável de ambiente
+- 100 requests/minuto para rotas de conteúdo
+- **10 requests/minuto para login** (anti brute force)
+- Configurável via variáveis de ambiente
+- Resposta 429 Too Many Requests
+
+## RNF10 - Resiliência Free Tier
+
+**Descrição:** Operação resiliente dentro dos limites do free tier.
+
+**Critérios de Aceitação:**
+- **Timeouts configuráveis** em todas as chamadas HTTP
+- **Pool PostgreSQL = 1** (respeitar limite de 2 conexões do Supabase)
+- **1 worker/thread por serviço** (512MB RAM)
+- **Degradação graciosa:** se ML falha, conteúdo vira `failed`
+- **Sessão via cookie** (Render Free tem filesystem efêmero)
+- **Blast radius:** falha do ML não derruba o Rails
+
+> 📖 **Detalhes completos:** [`docs/11-responsabilidades-e-resiliencia.md`](11-responsabilidades-e-resiliencia.md)

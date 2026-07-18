@@ -15,14 +15,65 @@ O modelo de classificação utilizará as seguintes 8 categorias para classifica
 | 7 | **Arquitetura & Design** | Padrões de projeto, arquitetura de software, boas práticas | Microserviços, Clean Architecture, SOLID, DDD, MVC, Design Patterns, UML |
 | 8 | **Carreira & Soft Skills** | Desenvolvimento profissional, produtividade, gestão | Liderança, comunicação, agilidade, produtividade, code review, mentoria |
 
-## Regras de Classificação
+## Estratégia de Classificação Híbrida
 
-- O modelo Logistic Regression retornará uma probabilidade para cada categoria.
-- A categoria escolhida será a de maior probabilidade, **desde que** a probabilidade seja >= 0.50 (threshold configurável via `ML_THRESHOLD`).
-- Se a maior probabilidade for inferior ao threshold, o conteúdo será classificado como **"Desconhecida"**, permitindo revisão manual futura.
-- As palavras-chave retornadas em `informacoes_adicionais` serão os **top 5 termos com maior peso TF-IDF no texto de entrada** (extração dinâmica, específica do documento).
+### Camada 1: Modelo Local (rápido e econômico)
 
-## Exemplo
+- Algoritmo: **Logistic Regression** com vetorização **TF-IDF**
+- O modelo retorna uma probabilidade para cada categoria
+- A categoria escolhida é a de maior probabilidade, **desde que** a probabilidade >= `ML_THRESHOLD` (default 0.50)
+- As palavras-chave (`informacoes_adicionais`) são os **top 5 termos com maior peso TF-IDF**
+- **Tempo de inferência:** < 50ms
+
+### Camada 2: Fallback Groq (para casos ambíguos)
+
+- Se a maior probabilidade do modelo local for **inferior ao threshold**, chama a **Groq API**
+- A Groq usa o modelo `llama-3.1-8b-instant` com um **system prompt** que instrui:
+  - Classificar o texto estritamente dentro das 8 categorias
+  - Retornar resposta em formato JSON estruturado
+  - Se não se encaixar em nenhuma categoria, retornar `"Desconhecida"`
+- **Tempo de inferência:** ~300-500ms (LPU)
+
+### Matriz de Decisão
+
+| Confiança ML Local | Ação | Responsável | Custo |
+|---|---|---|---|
+| >= 0.50 | ✅ Usa resultado local | scikit-learn (rápido) | Grátis |
+| < 0.50 | 🔄 Fallback para Groq | Groq API (LLM) | 0 (free tier) |
+| Modelo não carregado | 🔄 Fallback para Groq | Groq API (LLM) | 0 (free tier) |
+| Ambos indisponíveis | ❌ Retorna 503 | — | — |
+
+
+```mermaid
+flowchart TD
+    A[Texto recebido] --> B[Pré-processamento]
+    B --> C[TF-IDF + LogisticRegression]
+    
+    C --> D{Probabilidade<br/>>= 0.50?}
+    
+    D -->|Sim ✅| E["categoria: 'Backend'<br/>probabilidade: 0.87<br/>keywords: [Ruby, Rails, API]"]
+    
+    D -->|Não ❌| F[Fallback: Groq API]
+    F --> G[System prompt com<br/>as 8 categorias]
+    G --> H["categoria: 'Dados & ML'<br/>(via LLM reasoning)"]
+    
+    E --> I[Salva no PostgreSQL]
+    H --> I
+
+    style A fill:#37474F,color:#fff,stroke:#fff
+    style B fill:#00838F,color:#fff,stroke:#fff
+    style C fill:#6A1B9A,color:#fff,stroke:#fff
+    style D fill:#E65100,color:#fff,stroke:#fff
+    style E fill:#2E7D32,color:#fff,stroke:#fff
+    style F fill:#F97316,color:#fff,stroke:#fff
+    style G fill:#F97316,color:#fff,stroke:#fff
+    style H fill:#F97316,color:#fff,stroke:#fff
+    style I fill:#1565C0,color:#fff,stroke:#fff
+```
+
+## Exemplos
+
+### Classificação local (confiança alta)
 
 ```json
 {
@@ -32,14 +83,27 @@ O modelo de classificação utilizará as seguintes 8 categorias para classifica
 }
 ```
 
+### Fallback Groq (confiança baixa)
+
+```json
+{
+  "categoria": "Dados & ML",
+  "probabilidade": 0.0,
+  "informacoes_adicionais": ["machine learning", "dados", "classificação"]
+}
+```
+
 ## Limitações do MVP
 
-- **Dataset pequeno:** 80 exemplos sintéticos (10 por categoria) — baseline suficiente para validar o fluxo, mas métricas de acurácia serão instáveis em validação cruzada com 5 folds (~2 exemplos/classe/fold). Para produção, recomenda-se expandir para ≥ 100 exemplos por categoria.
-- **Cobertura linguística:** textos sintéticos podem não representar a variedade de estilos de escrita reais. O threshold elevado (0.50) mitiga falsos positivos.
-- **Extração de keywords:** top 5 TF-IDF por documento (dinâmica). Pode incluir ruído em textos muito curtos.
+- **Dataset pequeno:** 80 exemplos sintéticos (10 por categoria) — baseline suficiente para validar o fluxo. O fallback Groq compensa a baixa acurácia do modelo local em casos ambíguos.
+- **Cobertura linguística:** Textos sintéticos podem não representar a variedade de estilos de escrita reais. À medida que usuários cadastrarem mais conteúdos, o dataset pode ser expandido para re-treinar o modelo local.
+- **Extração de keywords:** Top 5 TF-IDF por documento (dinâmica). Pode incluir ruído em textos muito curtos.
+- **Fallback Groq:** Depende de conectividade com a internet e do rate limit da API (30 RPM no free tier).
 
 ## Evolução Futura
 
 - A taxonomia pode ser expandida com subcategorias conforme o volume de conteúdos crescer
-- O threshold padrão (0.50) pode ser ajustado via `ML_THRESHOLD` após validação com dados reais
-- Novas categorias podem ser adicionadas sem retreinar todo o modelo (apenas as duas classes)
+- O threshold (0.50) pode ser ajustado via `ML_THRESHOLD` após validação com dados reais
+- O dataset de treino pode ser aumentado com conteúdos classificados via Groq (após revisão)
+- O modelo local pode ser re-treinado periodicamente com dados reais para reduzir dependência do fallback
+- Novas categorias podem ser adicionadas sem retreinar todo o modelo (apenas duas classes)

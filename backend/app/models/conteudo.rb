@@ -1,4 +1,6 @@
 class Conteudo < ApplicationRecord
+  belongs_to :user
+
   enum :status, { pending: "pending", processing: "processing", done: "done", failed: "failed" }
 
   validates :titulo, presence: true, length: { minimum: 3, maximum: 200 }

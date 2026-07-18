@@ -1,6 +1,0 @@
-:concurrency: <%= ENV.fetch("SIDEKIQ_CONCURRENCY", 5) %>
-
-:queues:
-  - [default, 1]
-
-:max_retries: <%= ENV.fetch("SIDEKIQ_RETRY_MAX", 3) %>

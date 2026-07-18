@@ -5,12 +5,13 @@ class CreateConteudos < ActiveRecord::Migration[7.2]
     SQL
 
     create_table :conteudos do |t|
-      t.string   :titulo,             null: false, limit: 200
-      t.text     :texto,              null: false
-      t.string   :categoria,          limit: 50
-      t.decimal  :probabilidade,      precision: 5, scale: 4
-      t.text     :informacoes_adicionais, array: true
-      t.enum     :status,             enum_type: :status_conteudo, default: "pending", null: false
+      t.references :user,              null: false, foreign_key: true
+      t.string     :titulo,            null: false, limit: 200
+      t.text       :texto,             null: false
+      t.string     :categoria,         limit: 50
+      t.decimal    :probabilidade,     precision: 5, scale: 4
+      t.text       :informacoes_adicionais, array: true
+      t.enum       :status,            enum_type: :status_conteudo, default: "pending", null: false
       t.timestamps
     end
 
