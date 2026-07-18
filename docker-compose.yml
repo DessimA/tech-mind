@@ -33,9 +33,9 @@ services:
       - techmind
     restart: unless-stopped
 
-  backend:
+  web:
     build:
-      context: ./backend
+      context: ./services/web
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
@@ -55,7 +55,7 @@ services:
       RAILS_ENV: ${RAILS_ENV:-development}
       RAILS_LOG_TO_STDOUT: "true"
       SESSION_DRIVER: cookie
-      ML_HOST: ml-service
+      ML_HOST: ml
       ML_PORT: "8000"
       ML_TIMEOUT: "8"
       RATE_LIMIT_MAX: "100"
@@ -78,9 +78,9 @@ services:
       - techmind
     restart: unless-stopped
 
-  ml-service:
+  ml:
     build:
-      context: ./ml-service
+      context: ./services/ml
       dockerfile: Dockerfile
     environment:
       ML_THRESHOLD: ${ML_THRESHOLD:-0.5}
@@ -97,9 +97,9 @@ services:
       - techmind
     restart: unless-stopped
 
-  backend-test:
+  web-test:
     build:
-      context: ./backend
+      context: ./services/web
       dockerfile: Dockerfile
     entrypoint: ["bin/rails", "db:create db:migrate", "&&", "bundle", "exec", "rspec"]
     environment:
@@ -117,7 +117,7 @@ services:
       SECRET_KEY_BASE: test-secret-key-base-for-testing
       RAILS_MAX_THREADS: "1"
       WEB_CONCURRENCY: "0"
-      ML_HOST: ml-service
+      ML_HOST: ml
       ML_PORT: "8000"
       ML_TIMEOUT: "8"
     depends_on:
@@ -125,7 +125,7 @@ services:
         condition: service_healthy
       valkey:
         condition: service_healthy
-      ml-service:
+      ml:
         condition: service_healthy
     profiles:
       - test

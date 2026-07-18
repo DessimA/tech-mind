@@ -16,33 +16,23 @@ infra/terraform.tfstate.backup
 infra/*.tfplan
 *.tfvars
 
-## Ruby / Rails
-backend/vendor/
-backend/.bundle/
-backend/log/
-backend/tmp/
-backend/public/assets/
-backend/storage/
+## Ruby / Rails (services/web)
+services/web/vendor/
+services/web/.bundle/
+services/web/log/
+services/web/tmp/
+services/web/public/assets/
+services/web/storage/
 
-## PHP / Laravel
-frontend/vendor/
-frontend/node_modules/
-frontend/.env
-frontend/.env.backup
-frontend/storage/logs/
-frontend/storage/framework/cache/data/
-frontend/storage/framework/sessions/
-frontend/storage/framework/views/
-
-## Python
-ml-service/__pycache__/
-ml-service/.venv/
-ml-service/venv/
-ml-service/*.pyc
-ml-service/.pytest_cache/
+## Python (services/ml)
+services/ml/__pycache__/
+services/ml/.venv/
+services/ml/venv/
+services/ml/*.pyc
+services/ml/.pytest_cache/
 
 ## Jupyter
-ml-service/notebooks/.ipynb_checkpoints/
+services/ml/notebooks/.ipynb_checkpoints/
 
 ## IDE
 .vscode/
