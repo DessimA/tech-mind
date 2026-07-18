@@ -49,7 +49,13 @@ def test_predict_returns_valid_category(client):
     resp = client.post("/predict", json={"texto": texto})
     body = resp.json()
     assert body["categoria"] in [
-        "Desconhecida", "Frontend", "Backend", "DevOps & Infraestrutura",
-        "Mobile", "Dados & ML", "Carreira & Soft Skills", "Arquitetura & Design",
-        "Segurança"
+        "Desconhecida",
+        "Frontend",
+        "Backend",
+        "DevOps & Infraestrutura",
+        "Mobile",
+        "Dados & ML",
+        "Carreira & Soft Skills",
+        "Arquitetura & Design",
+        "Segurança",
     ]

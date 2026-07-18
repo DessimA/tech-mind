@@ -50,7 +50,6 @@ TAG_TO_CATEGORY = {
     "sqlalchemy": "Backend",
     "celery": "Backend",
     "sidekiq": "Backend",
-
     # === Frontend ===
     "javascript": "Frontend",
     "typescript": "Frontend",
@@ -89,7 +88,6 @@ TAG_TO_CATEGORY = {
     "frontend": "Frontend",
     "ecmascript-6": "Frontend",
     "dom": "Frontend",
-
     # === DevOps & Infraestrutura ===
     "docker": "DevOps & Infraestrutura",
     "kubernetes": "DevOps & Infraestrutura",
@@ -129,7 +127,6 @@ TAG_TO_CATEGORY = {
     "reverse-proxy": "DevOps & Infraestrutura",
     "ssl-certificate": "DevOps & Infraestrutura",
     "lets-encrypt": "DevOps & Infraestrutura",
-
     # === Dados & ML ===
     "machine-learning": "Dados & ML",
     "deep-learning": "Dados & ML",
@@ -168,7 +165,6 @@ TAG_TO_CATEGORY = {
     "ai": "Dados & ML",
     "artificial-intelligence": "Dados & ML",
     "genai": "Dados & ML",
-
     # === Mobile ===
     "android": "Mobile",
     "ios": "Mobile",
@@ -193,7 +189,6 @@ TAG_TO_CATEGORY = {
     "android-studio": "Mobile",
     "xcode": "Mobile",
     "mobile": "Mobile",
-
     # === Segurança ===
     "security": "Segurança",
     "cybersecurity": "Segurança",
@@ -224,7 +219,6 @@ TAG_TO_CATEGORY = {
     "secret-management": "Segurança",
     "security-headers": "Segurança",
     "zero-trust": "Segurança",
-
     # === Arquitetura & Design ===
     "design-patterns": "Arquitetura & Design",
     "microservices": "Arquitetura & Design",
@@ -254,7 +248,6 @@ TAG_TO_CATEGORY = {
     "scalability": "Arquitetura & Design",
     "distributed-system": "Arquitetura & Design",
     "software-design": "Arquitetura & Design",
-
     # === Carreira & Soft Skills ===
     "career-development": "Carreira & Soft Skills",
     "career": "Carreira & Soft Skills",
@@ -284,6 +277,7 @@ TAG_TO_CATEGORY = {
 
 # Categorias válidas do TechMind
 VALID_CATEGORIES = set(TAG_TO_CATEGORY.values())
+
 
 def map_tags_to_category(tags: list[str]) -> str | None:
     """Mapeia uma lista de tags do SO para a categoria TechMind mais provável.

@@ -1,8 +1,139 @@
-# Omakase Ruby styling for Rails
+# RuboCop configuration for TechMind Rails API
 inherit_gem: { rubocop-rails-omakase: rubocop.yml }
 
-# Overwrite or add rules to create your own house style
-#
-# # Use `[a, [b, c]]` not `[ a, [ b, c ] ]`
-# Layout/SpaceInsideArrayLiteralBrackets:
-#   Enabled: false
+AllCops:
+  NewCops: enable
+  Exclude:
+    - "db/schema.rb"
+    - "node_modules/**/*"
+    - "vendor/**/*"
+    - "bin/**/*"
+    - "public/**/*"
+
+# ── Rails-specific ──────────────────────────────────
+
+# Desabilitado: app é pt-BR, textos fixos são intencionais
+Rails/I18nLocaleTexts:
+  Enabled: false
+
+# Desabilitado: usamos params.require(:user).permit (Rails classico)
+# TODO: migrar para params.expect(...) no futuro
+Rails/StrongParametersExpect:
+  Enabled: false
+
+Rails/InverseOf:
+  Enabled: true
+
+Rails/HasManyOrHasOneDependent:
+  Enabled: true
+
+Rails/NotNullColumn:
+  Enabled: true
+
+Rails/Output:
+  Enabled: true
+
+Rails/OutputSafety:
+  Enabled: true
+
+Rails/FilePath:
+  Enabled: true
+
+Rails/FindBy:
+  Enabled: true
+
+Rails/PluralizationGrammar:
+  Enabled: true
+
+# Rails/PresentOverBlank is not available in rubocop-rails-omakase
+# https://docs.rubocop.org/rubocop-rails/cops_rails.html
+
+Rails/UnknownEnv:
+  Enabled: true
+  Environments:
+    - development
+    - test
+    - production
+
+Rails/StripHeredoc:
+  Enabled: true
+
+# ── Security & correctness ──────────────────────────
+
+Lint/NumberConversion:
+  Enabled: false
+
+Lint/MissingSuper:
+  Enabled: true
+
+Security/YAMLLoad:
+  Enabled: true
+
+Security/Open:
+  Enabled: true
+
+Security/JSONLoad:
+  Enabled: true
+
+# ── Style ────────────────────────────────────────────
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/SymbolArray:
+  EnforcedStyle: percent
+  MinSize: 4
+
+Style/WordArray:
+  Enabled: false
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Style/BlockDelimiters:
+  Enabled: false
+
+Style/FormatStringToken:
+  Enabled: false
+
+# ── Metrics ──────────────────────────────────────────
+
+Metrics/MethodLength:
+  Max: 20
+  CountAsOne:
+    - array
+    - hash
+    - heredoc
+
+Metrics/ClassLength:
+  Max: 150
+
+Metrics/AbcSize:
+  Max: 25
+
+Metrics/BlockLength:
+  Exclude:
+    - "spec/**/*"
+    - "config/routes.rb"
+
+# ── Layout ───────────────────────────────────────────
+
+Layout/LineLength:
+  Max: 120
+  Exclude:
+    - "config/initializers/*.rb"
+
+Layout/EmptyLinesAroundAttributeAccessor:
+  Enabled: true
+
+Layout/SpaceAroundMethodCallOperator:
+  Enabled: true

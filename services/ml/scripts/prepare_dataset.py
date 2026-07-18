@@ -28,7 +28,6 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).parent))
 from tag_mapping import TAG_TO_CATEGORY, VALID_CATEGORIES, map_tags_to_category
 
-
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 REAL_CSV_PATH = DATA_DIR / "train_real.csv"
 STATS_PATH = DATA_DIR / "train_real_stats.json"
@@ -173,9 +172,7 @@ def save_dataset(df: pd.DataFrame) -> None:
         "total_exemplos": len(df),
         "categorias": len(counts),
         "exemplos_por_categoria": counts,
-        "distribuicao": {
-            cat: round(count / len(df) * 100, 1) for cat, count in counts.items()
-        },
+        "distribuicao": {cat: round(count / len(df) * 100, 1) for cat, count in counts.items()},
     }
 
     with open(STATS_PATH, "w", encoding="utf-8") as f:
@@ -196,7 +193,9 @@ def print_category_summary(df: pd.DataFrame) -> None:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Prepara dataset real do Stack Overflow para o TechMind")
+    parser = argparse.ArgumentParser(
+        description="Prepara dataset real do Stack Overflow para o TechMind"
+    )
     parser.add_argument(
         "--source",
         choices=["huggingface", "kaggle"],

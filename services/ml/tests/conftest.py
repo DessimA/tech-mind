@@ -19,6 +19,7 @@ def client():
     model.load()
 
     from fastapi.testclient import TestClient
+
     with TestClient(app) as c:
         yield c
 

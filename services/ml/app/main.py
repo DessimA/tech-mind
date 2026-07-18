@@ -49,11 +49,7 @@ def extract_keywords(texto_limpo: str, top_n: int = 5) -> list[str]:
     tfidf_matrix = vectorizer.transform([texto_limpo])
     feature_names = vectorizer.get_feature_names_out()
     sorted_idx = tfidf_matrix[0].toarray().argsort()[0, ::-1]
-    return [
-        feature_names[i]
-        for i in sorted_idx[:top_n]
-        if tfidf_matrix[0, i] > 0
-    ]
+    return [feature_names[i] for i in sorted_idx[:top_n] if tfidf_matrix[0, i] > 0]
 
 
 @app.get("/health", response_model=HealthResponse)

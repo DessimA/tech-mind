@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+EXIT_CODE=0
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+cd "$ROOT_DIR"
+
+echo -e "${YELLOW}═══ Linting TechMind — $(date) ═══${NC}"
+echo ""
+
+# ── Ruby / Rails ──
+echo -e "${YELLOW}── Ruby / Rails (RuboCop + Brakeman) ──${NC}"
+
+if docker compose run --no-deps --rm --entrypoint bundle web-test exec rubocop --parallel --format simple; then
+  echo -e "${GREEN}  ✓ RuboCop: nenhum problema encontrado${NC}"
+else
+  rc=$?
+  echo -e "${RED}  ✗ RuboCop: problemas encontrados (veja acima)${NC}"
+  EXIT_CODE=$rc
+fi
+
+if docker compose run --no-deps --rm --entrypoint bundle web-test exec brakeman --quiet --no-pager; then
+  echo -e "${GREEN}  ✓ Brakeman: nenhuma vulnerabilidade encontrada${NC}"
+else
+  rc=$?
+  echo -e "${RED}  ✗ Brakeman: vulnerabilidades encontradas (veja acima)${NC}"
+  EXIT_CODE=$rc
+fi
+
+echo ""
+
+# ── Python / ML ──
+echo -e "${YELLOW}── Python / ML (Ruff) ──${NC}"
+
+if docker compose run --rm ml ruff check /app; then
+  echo -e "${GREEN}  ✓ Ruff lint: nenhum problema encontrado${NC}"
+else
+  rc=$?
+  echo -e "${RED}  ✗ Ruff lint: problemas encontrados (veja acima)${NC}"
+  EXIT_CODE=$rc
+fi
+
+if docker compose run --rm ml ruff format --check /app; then
+  echo -e "${GREEN}  ✓ Ruff format: nenhuma divergência de formatação${NC}"
+else
+  rc=$?
+  echo -e "${RED}  ✗ Ruff format: divergências de formatação (veja acima)${NC}"
+  EXIT_CODE=$rc
+fi
+
+echo ""
+
+# ── Resultado final ──
+if [ $EXIT_CODE -eq 0 ]; then
+  echo -e "${GREEN}═══ Lint passou com sucesso! ═══${NC}"
+else
+  echo -e "${RED}═══ Lint falhou — corrija os problemas acima ═══${NC}"
+fi
+
+exit $EXIT_CODE
