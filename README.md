@@ -1,22 +1,18 @@
-# TechMind - Organização Inteligente de Conhecimento
+# TechMind — Organização Inteligente de Conhecimento
 
-![Ruby](https://img.shields.io/badge/Ruby-3.3-CC342D?style=flat&logo=ruby&logoColor=white)
-![Rails](https://img.shields.io/badge/Rails-8.1-D30001?style=flat&logo=rubyonrails&logoColor=white)
-![RSpec](https://img.shields.io/badge/RSpec-60_passing-28A745?style=flat&logo=rubygems&logoColor=white)
-![Pytest](https://img.shields.io/badge/Pytest-16_passing-28A745?style=flat&logo=pytest&logoColor=white)
-![Hotwire](https://img.shields.io/badge/Hotwire-Turbo-FF6F00?style=flat&logo=hotwire&logoColor=white)
-![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=flat&logo=python&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white)
-![scikit--learn](https://img.shields.io/badge/scikit--learn-F7931E?style=flat&logo=scikitlearn&logoColor=white)
-![Groq](https://img.shields.io/badge/Groq-LLM-F97316?style=flat&logo=groq&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=flat&logo=postgresql&logoColor=white)
-![Valkey](https://img.shields.io/badge/Valkey-8-DC382D?style=flat&logo=valkey&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=flat&logo=docker&logoColor=white)
-![Render](https://img.shields.io/badge/Render-Free-46E3B7?style=flat&logo=render&logoColor=white)
+![Ruby](https://img.shields.io/badge/Ruby-3.3-CC342D?style=for-the-badge&logo=ruby&logoColor=white)
+![Rails](https://img.shields.io/badge/Rails-8.1-D30001?style=for-the-badge&logo=rubyonrails&logoColor=white)
+![RSpec](https://img.shields.io/badge/Testes-84_passing-28A745?style=for-the-badge&logo=rubygems&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?style=for-the-badge&logo=fastapi&logoColor=white)
+![Postgres](https://img.shields.io/badge/Postgres-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![Valkey](https://img.shields.io/badge/Valkey-8-DC382D?style=for-the-badge&logo=valkey&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 
 ---
 
-## Sobre o Projeto
+## Sobre
 
 O **TechMind** é um MVP de sistema de organização inteligente de conhecimento técnico. Construído com **Rails 8 full-stack** (HTML + Hotwire + API) e **FastAPI** para classificação ML híbrida — modelo local scikit-learn com fallback inteligente para **LLM via Groq API**.
 
@@ -58,8 +54,9 @@ flowchart LR
 
 | Serviço | Framework | Testes | Status |
 |---|---|---|---|
-| **Web (Rails)** | RSpec | **60 testes** (models + requests + auth) | ✅ Passando |
-| **ML (FastAPI)** | Pytest | **16 testes** (predição + health + fallback Groq) | ✅ Passando |
+| **Web (Rails)** | RSpec | **68 testes** | ✅ Passando |
+| **ML (FastAPI)** | Pytest | **16 testes** | ✅ Passando |
+| **Linters** | RuboCop + Brakeman + Ruff | 27 ofensas (cosméticas) | ⚠️ Auto-corrigível |
 
 ---
 
@@ -81,8 +78,11 @@ docker compose up -d
 # 4. Acesse http://localhost:3000
 
 # 5. Para rodar os testes:
-docker compose run --rm web-test    # RSpec (60 testes)
-docker compose run --rm ml pytest    # Pytest (16 testes)
+docker compose run --rm web-test           # RSpec (68 testes)
+docker compose run --rm ml pytest           # Pytest (16 testes)
+
+# 6. Para rodar linters:
+bin/lint                                     # RuboCop + Brakeman + Ruff
 ```
 
 ---
