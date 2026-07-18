@@ -1,6 +1,8 @@
 module Api
   module V1
     class ConteudosController < ApplicationController
+      include Cacheable
+
       skip_before_action :authenticate_user!, only: [:index, :show, :create]
       rescue_from ActiveRecord::RecordNotFound, with: :not_found
       rescue_from ActiveRecord::RecordInvalid, with: :unprocessable
@@ -10,42 +12,38 @@ module Api
       def index
         page = (params[:page] || 1).to_i.clamp(1, 999)
         per_page = [(params[:per_page] || 20).to_i, 100].min
-        cache_key = "conteudos:v1:user:#{@api_user.id}:page:#{page}:per:#{per_page}:q:#{params[:q]}:sort:#{params[:sort]}"
+        cache_key = "#{cache_namespace}:page:#{page}:per:#{per_page}:q:#{params[:q]}:sort:#{params[:sort]}"
 
-        cached = Rails.cache.read(cache_key)
-        if cached
-          return render json: cached
-        end
+        result = cached_conteudos(cache_key) do
+          order_clause = case params[:sort]
+          when "created_at_asc" then { created_at: :asc }
+          when "titulo_asc" then { titulo: :asc }
+          else { created_at: :desc }
+          end
 
-        order_clause = case params[:sort]
-        when "created_at_asc" then { created_at: :asc }
-        when "titulo_asc" then { titulo: :asc }
-        else { created_at: :desc }
-        end
+          conteudos = @api_user.conteudos.order(order_clause)
+          q = params[:q]&.strip
+          if q.present?
+            conteudos = conteudos.where(
+              "titulo ILIKE ? OR informacoes_adicionais @> ARRAY[?]::text[]",
+              "%#{q}%", q
+            )
+          end
 
-        conteudos = @api_user.conteudos.order(order_clause)
-        q = params[:q]&.strip
-        if q.present?
-          conteudos = conteudos.where(
-            "titulo ILIKE ? OR informacoes_adicionais @> ARRAY[?]::text[]",
-            "%#{q}%", q
-          )
-        end
+          paginated = conteudos.page(page).per(per_page)
+          total = conteudos.count
 
-        paginated = conteudos.page(page).per(per_page)
-        total = conteudos.count
-
-        result = {
-          data: paginated.map { |c| list_item(c) },
-          meta: {
-            current_page: page,
-            total_pages: (total.to_f / per_page).ceil,
-            total_count: total,
-            per_page: per_page
+          {
+            data: paginated.map { |c| list_item(c) },
+            meta: {
+              current_page: page,
+              total_pages: (total.to_f / per_page).ceil,
+              total_count: total,
+              per_page: per_page
+            }
           }
-        }
+        end
 
-        Rails.cache.write(cache_key, result, expires_in: ENV.fetch("CACHE_TTL", 300).to_i)
         render json: result
       end
 
@@ -103,10 +101,12 @@ module Api
         }
       end
 
-      def invalidate_cache
-        Rails.cache.delete_matched("conteudos:v1:user:#{@api_user.id}:*")
-      rescue StandardError
-        nil
+      def cache_user
+        @api_user
+      end
+
+      def cache_namespace
+        "conteudos:v1:user:#{@api_user.id}"
       end
 
       def authenticate_api!

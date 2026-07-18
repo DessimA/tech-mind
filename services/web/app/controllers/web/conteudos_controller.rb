@@ -1,8 +1,10 @@
 module Web
   class ConteudosController < ApplicationController
+    include Cacheable
+
     def index
       page = (params[:page] || 1).to_i.clamp(1, 999)
-      cache_key = "conteudos:user:#{current_user.id}:page:#{page}:q:#{params[:q]}:sort:#{params[:sort]}"
+      cache_key = "#{cache_namespace}:page:#{page}:q:#{params[:q]}:sort:#{params[:sort]}"
 
       @conteudos = cached_conteudos(cache_key) do
         order_clause = case params[:sort]
@@ -69,23 +71,12 @@ module Web
       params.require(:conteudo).permit(:titulo, :texto)
     end
 
-    def cached_conteudos(key)
-      cached = Rails.cache.read(key)
-      if cached
-        @from_cache = true
-        return cached
-      end
-
-      result = yield
-      result = result.to_a if result.respond_to?(:to_a)
-      Rails.cache.write(key, result, expires_in: ENV.fetch("CACHE_TTL", 300).to_i)
-      result
+    def cache_user
+      current_user
     end
 
-    def invalidate_cache
-      Rails.cache.delete_matched("conteudos:user:#{current_user.id}:*")
-    rescue StandardError
-      nil
+    def cache_namespace
+      "conteudos:user:#{current_user.id}"
     end
 
     def classificado?(conteudo)
