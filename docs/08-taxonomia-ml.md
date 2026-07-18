@@ -93,9 +93,68 @@ flowchart TD
 }
 ```
 
+## Dataset Real (Stack Overflow)
+
+Além do dataset sintético, o TechMind possui um pipeline para baixar e preparar dados reais do **Stack Overflow**:
+
+```bash
+python services/ml/scripts/prepare_dataset.py
+```
+
+### Como funciona
+
+1. **Fonte:** [c17hawke/stackoverflow-dataset](https://huggingface.co/datasets/c17hawke/stackoverflow-dataset) no Hugging Face ou [Facebook Recruiting III](https://www.kaggle.com/c/facebook-recruiting-iii-keyword-extraction) no Kaggle
+2. **Mapeamento:** ~250 tags do Stack Overflow são mapeadas para as 8 categorias do TechMind (ex: `docker` → `DevOps & Infraestrutura`, `reactjs` → `Frontend`)
+3. **Balanceamento:** Opção `--max-per-category` para limitar exemplos por categoria
+4. **Saída:** `services/ml/data/train_real.csv` — substitui ou complementa o dataset sintético
+
+### Mapeamento Tag → Categoria
+
+O arquivo `services/ml/scripts/tag_mapping.py` contém ~250 tags mapeadas:
+
+| Categoria | Exemplos de Tags |
+|---|---|
+| Backend | ruby-on-rails, python, java, node.js, postgresql, api, rest |
+| Frontend | reactjs, angular, vue.js, css, tailwind-css, webpack |
+| DevOps & Infraestrutura | docker, kubernetes, terraform, aws, linux, nginx |
+| Dados & ML | machine-learning, tensorflow, pytorch, pandas, nlp |
+| Mobile | android, ios, swift, flutter, react-native |
+| Segurança | security, oauth, jwt, encryption, owasp |
+| Arquitetura & Design | design-patterns, microservices, clean-architecture, solid |
+| Carreira & Soft Skills | career-development, code-review, agile, mentoring |
+
+### Como usar no treinamento
+
+No notebook `services/ml/notebooks/techmind_ml.ipynb`, altere:
+
+```python
+# Dataset sintético (MVP):
+DATA_PATH = os.path.join('..', 'data', 'train.csv')
+# Dataset real do Stack Overflow:
+DATA_PATH = os.path.join('..', 'data', 'train_real.csv')
+```
+
+### Estratégia Híbrida Recomendada
+
+```mermaid
+flowchart LR
+    A[Dataset Sintético<br/>80 exemplos] --> B[Treino Inicial<br/>MVP]
+    C[Stack Overflow<br/>Milhares de exemplos] --> D[Treino Avançado<br/>v2+]
+    B --> E{Produção}
+    D --> E
+    E --> F[Fallback Groq<br/>para casos incertos]
+
+    style A fill:#FFA000,color:#fff
+    style C fill:#2E7D32,color:#fff
+    style D fill:#6A1B9A,color:#fff
+    style B fill:#FFA000,color:#fff
+    style E fill:#37474F,color:#fff
+    style F fill:#F97316,color:#fff
+```
+
 ## Limitações do MVP
 
-- **Dataset pequeno:** 80 exemplos sintéticos (10 por categoria) — baseline suficiente para validar o fluxo. O fallback Groq compensa a baixa acurácia do modelo local em casos ambíguos.
+- **Dataset pequeno:** 80 exemplos sintéticos (10 por categoria) — baseline suficiente para validar o fluxo. O fallback Groq compensa a baixa acurácia do modelo local em casos ambíguos. Com o dataset real do Stack Overflow, a acurácia esperada sobe para ~85-90%.
 - **Cobertura linguística:** Textos sintéticos podem não representar a variedade de estilos de escrita reais. À medida que usuários cadastrarem mais conteúdos, o dataset pode ser expandido para re-treinar o modelo local.
 - **Extração de keywords:** Top 5 TF-IDF por documento (dinâmica). Pode incluir ruído em textos muito curtos.
 - **Fallback Groq:** Depende de conectividade com a internet e do rate limit da API (30 RPM no free tier).
