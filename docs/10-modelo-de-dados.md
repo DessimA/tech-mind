@@ -2,7 +2,7 @@
 
 ## Tabela `users`
 
-Armazena os usuários do sistema. Autenticação via JWT com senhas hasheadas (bcrypt).
+Armazena os usuários do sistema. Autenticação via sessão Rails nativa com senhas hasheadas (bcrypt).
 
 ### DDL
 

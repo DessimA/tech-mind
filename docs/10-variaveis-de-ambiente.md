@@ -53,7 +53,7 @@
 | Variável | Obrigatória | Valor Padrão | Descrição |
 |---|---|---|---|
 | `ML_TIMEOUT` | Não | `8` | Timeout Rails → ML Service (/predict) |
-| `ML_HOST` | Não | `ml-service` | Host do ML Service |
+| `ML_HOST` | Não | `ml` | Host do ML Service (nome do serviço no Docker Compose) |
 | `ML_PORT` | Não | `8000` | Porta do ML Service |
 
 ## Rate Limiting

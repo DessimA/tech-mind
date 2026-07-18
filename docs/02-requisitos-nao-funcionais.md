@@ -71,7 +71,16 @@
 
 ## RNF08 - Versionamento de API
 
-**Descrição:** Endpoints da API prefixados com `/v1/` (para consumo do ML Service e futuros clientes).
+**Descrição:** Endpoints da API prefixados com `/api/v1/` (para consumo interno e futuros clientes). Health check também disponível em `/v1/health`.
+
+**Rotas versionadas:**
+
+| Rota | Prefixo | Controller |
+|---|---|---|
+| `GET /api/v1/conteudos` | `/api/v1/` | `Api::V1::ConteudosController#index` |
+| `GET /api/v1/conteudos/:id` | `/api/v1/` | `Api::V1::ConteudosController#show` |
+| `POST /api/v1/conteudos` | `/api/v1/` | `Api::V1::ConteudosController#create` |
+| `GET /v1/health` | `/v1/` | `HealthController#show` |
 
 ## RNF09 - Rate Limiting
 
