@@ -1,5 +1,3 @@
-require "net/http"
-
 module Web
   class ConteudosController < ApplicationController
     def index
@@ -44,14 +42,13 @@ module Web
       ActiveRecord::Base.transaction do
         @conteudo.save!
 
-        # Chama ML Service sincronamente
-        result = call_ml_service(@conteudo.texto)
+        result = MlService.new(@conteudo.texto).call
 
-        if result
+        if result.success?
           @conteudo.update!(
-            categoria: result["categoria"],
-            probabilidade: result["probabilidade"],
-            informacoes_adicionais: result["informacoes_adicionais"],
+            categoria: result.data["categoria"],
+            probabilidade: result.data["probabilidade"],
+            informacoes_adicionais: result.data["informacoes_adicionais"],
             status: :done
           )
         else
@@ -70,34 +67,6 @@ module Web
 
     def conteudo_params
       params.require(:conteudo).permit(:titulo, :texto)
-    end
-
-    def call_ml_service(texto)
-      ml_host = ENV.fetch("ML_HOST", "ml")
-      ml_port = ENV.fetch("ML_PORT", "8000")
-      timeout = ENV.fetch("ML_TIMEOUT", "8").to_i
-
-      uri = URI("http://#{ml_host}:#{ml_port}/predict")
-
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.open_timeout = [timeout / 2, 3].max
-      http.read_timeout = timeout
-
-      request = Net::HTTP::Post.new(uri)
-      request["Content-Type"] = "application/json"
-      request.body = JSON.generate({ texto: texto })
-
-      response = http.request(request)
-
-      if response.is_a?(Net::HTTPOK)
-        JSON.parse(response.body)
-      else
-        Rails.logger.warn "ML Service: HTTP #{response.code}"
-        nil
-      end
-    rescue Net::ReadTimeout, Net::OpenTimeout, Errno::ECONNREFUSED => e
-      Rails.logger.warn "ML Service: #{e.class} - #{e.message}"
-      nil
     end
 
     def cached_conteudos(key)
