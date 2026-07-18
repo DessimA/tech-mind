@@ -9,7 +9,7 @@ done
 echo "PostgreSQL está pronto!"
 
 echo "=== Executando migrations ==="
-bundle exec rails db:migrate 2>/dev/null || echo "Nenhuma migration pendente"
+bundle exec rails db:migrate 2>&1 || echo "Nenhuma migration pendente"
 
 echo "=== Iniciando servidor ==="
 exec "$@"
