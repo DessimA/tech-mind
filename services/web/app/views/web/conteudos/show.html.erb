@@ -1,67 +1,67 @@
 <% content_for :title, @conteudo.titulo %>
 
 <div class="mb-6">
-  <%= link_to "&larr; Voltar".html_safe, conteudos_path, class: "text-sm text-indigo-600 hover:text-indigo-800" %>
+  <%= link_to "← Voltar".html_safe, conteudos_path, class: "text-sm text-[#A9AFBC] hover:text-accent-cyan transition-colors font-mono uppercase tracking-wider" %>
 </div>
 
-<div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+<div class="bg-surface border-2 border-ink sticker-shadow rounded-lg overflow-hidden">
   <div class="p-6">
     <div class="flex items-start justify-between mb-4">
-      <h1 class="text-2xl font-bold text-gray-900"><%= @conteudo.titulo %></h1>
-      <span class="px-3 py-1 rounded-full text-sm font-medium
-        <%= @conteudo.status == "done" ? "bg-green-50 text-green-700" :
-           @conteudo.status == "processing" ? "bg-blue-50 text-blue-700" :
-           "bg-red-50 text-red-700" %>">
+      <h1 class="text-2xl font-display text-[#F4F1E8] uppercase tracking-wide"><%= @conteudo.titulo %></h1>
+      <span class="px-3 py-1 text-xs font-mono uppercase tracking-wider text-ink border-2 border-ink
+        <%= @conteudo.status == "done" ? "bg-accent-green" :
+           @conteudo.status == "processing" ? "bg-accent-mustard" :
+           "bg-accent-magenta" %> sticker-shadow-sm">
         <%= @conteudo.status == "done" ? "Concluído" :
             @conteudo.status == "processing" ? "Processando" : "Falhou" %>
       </span>
     </div>
 
-    <div class="prose prose-sm max-w-none text-gray-700 whitespace-pre-wrap mb-6">
+    <div class="prose prose-sm max-w-none text-[#F4F1E8]/80 font-body leading-relaxed whitespace-pre-wrap mb-6">
       <%= @conteudo.texto %>
     </div>
 
     <% if @conteudo.status == "done" && @conteudo.categoria.present? %>
-      <div class="border-t border-gray-200 pt-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">Classificação</h2>
+      <div class="border-t-2 border-ink pt-6">
+        <h2 class="text-lg font-display text-accent-cyan uppercase tracking-wide mb-4">Classificação</h2>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="bg-gray-50 rounded-lg p-4">
-            <p class="text-sm text-gray-500 mb-1">Categoria</p>
-            <p class="text-lg font-semibold text-indigo-600"><%= @conteudo.categoria %></p>
+          <div class="bg-surface-alt border-2 border-ink rounded-lg p-4">
+            <p class="text-xs font-mono uppercase tracking-wider text-[#A9AFBC] mb-1">Categoria</p>
+            <p class="text-lg font-display text-accent-green uppercase tracking-wide"><%= @conteudo.categoria %></p>
           </div>
           <% if @conteudo.probabilidade && @conteudo.probabilidade > 0 %>
-            <div class="bg-gray-50 rounded-lg p-4">
-              <p class="text-sm text-gray-500 mb-1">Probabilidade</p>
-              <p class="text-lg font-semibold text-gray-900"><%= number_to_percentage(@conteudo.probabilidade * 100, precision: 1) %></p>
+            <div class="bg-surface-alt border-2 border-ink rounded-lg p-4">
+              <p class="text-xs font-mono uppercase tracking-wider text-[#A9AFBC] mb-1">Probabilidade</p>
+              <p class="text-lg font-display text-accent-magenta"><%= number_to_percentage(@conteudo.probabilidade * 100, precision: 1) %></p>
             </div>
           <% end %>
         </div>
 
         <% if @conteudo.informacoes_adicionais.present? %>
           <div class="mt-4">
-            <p class="text-sm text-gray-500 mb-2">Palavras-chave</p>
+            <p class="text-xs font-mono uppercase tracking-wider text-[#A9AFBC] mb-2">Palavras-chave</p>
             <div class="flex flex-wrap gap-2">
               <% @conteudo.informacoes_adicionais.each do |kw| %>
-                <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium"><%= kw %></span>
+                <span class="px-2 py-1 text-xs font-mono uppercase tracking-wider text-ink bg-accent-mustard border-2 border-ink sticker-shadow-sm"><%= kw %></span>
               <% end %>
             </div>
           </div>
         <% end %>
       </div>
     <% elsif @conteudo.status == "failed" %>
-      <div class="border-t border-gray-200 pt-6">
-        <div class="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-700">
+      <div class="border-t-2 border-ink pt-6">
+        <div class="bg-accent-magenta/10 border-2 border-accent-magenta rounded-lg p-4 text-sm text-accent-magenta font-medium">
           A classificação falhou. Tente cadastrar novamente.
         </div>
       </div>
     <% end %>
   </div>
 
-  <div class="bg-gray-50 px-6 py-3 border-t border-gray-200 flex justify-between items-center">
-    <p class="text-xs text-gray-400">
-      Criado em <%= l(@conteudo.created_at, format: :long) rescue @conteudo.created_at.strftime("%d/%m/%Y às %H:%M") %>
+  <div class="bg-surface-alt px-6 py-3 border-t-2 border-ink flex justify-between items-center">
+    <p class="text-xs font-mono text-[#A9AFBC]/50 uppercase tracking-wider">
+      Criado em <%= l(@conteudo.created_at, format: :long) rescue @conteudo.created_at.strftime("%d/%m/%Y") %>
     </p>
-    <%= link_to "Novo Conteúdo", new_conteudo_path, class: "text-sm text-indigo-600 hover:text-indigo-800 font-medium" %>
+    <%= link_to "Novo Conteúdo", new_conteudo_path, class: "text-sm font-mono uppercase tracking-wider text-accent-cyan hover:text-accent-green transition-colors glitch-hover" %>
   </div>
 </div>
