@@ -95,7 +95,7 @@ module Web
         Rails.logger.warn "ML Service: HTTP #{response.code}"
         nil
       end
-    rescue Net::TimeoutError, Errno::ECONNREFUSED => e
+    rescue Net::ReadTimeout, Net::OpenTimeout, Errno::ECONNREFUSED => e
       Rails.logger.warn "ML Service: #{e.class} - #{e.message}"
       nil
     end
@@ -108,6 +108,7 @@ module Web
       end
 
       result = yield
+      result = result.to_a if result.respond_to?(:to_a)
       Rails.cache.write(key, result, expires_in: ENV.fetch("CACHE_TTL", 300).to_i)
       result
     end

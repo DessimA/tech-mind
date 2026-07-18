@@ -101,7 +101,7 @@ services:
     build:
       context: ./services/web
       dockerfile: Dockerfile
-    entrypoint: ["bin/rails", "db:create db:migrate", "&&", "bundle", "exec", "rspec"]
+    entrypoint: ["/bin/sh", "-c", "bin/rails db:create 2>/dev/null; bin/rails db:migrate && bundle exec rspec"]
     environment:
       RAILS_ENV: test
       DB_HOST: postgres

@@ -39,7 +39,8 @@ module TechMind
 
     # Configurações de i18n
     config.i18n.default_locale = :"pt-BR"
-    config.i18n.available_locales = [:"pt-BR"]
+    config.i18n.available_locales = [:"pt-BR", :en]
+    config.i18n.fallbacks = true
 
     # Rate limiting
     config.middleware.use Rack::Attack

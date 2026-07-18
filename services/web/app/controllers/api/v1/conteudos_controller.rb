@@ -124,7 +124,7 @@ module Api
         else
           nil
         end
-      rescue Net::TimeoutError, Errno::ECONNREFUSED => e
+      rescue Net::ReadTimeout, Net::OpenTimeout, Errno::ECONNREFUSED => e
         Rails.logger.warn "ML Service: #{e.class} - #{e.message}"
         nil
       end

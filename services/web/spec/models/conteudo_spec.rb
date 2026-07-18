@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe Conteudo, type: :model do
-  subject { Conteudo.new(titulo: "Docker", texto: "Guia completo sobre containers Docker") }
+  subject { build(:conteudo) }
 
   it "e valido com atributos validos" do
     expect(subject).to be_valid
@@ -28,8 +28,9 @@ RSpec.describe Conteudo, type: :model do
   end
 
   it "status padrao e pending" do
-    subject.save!
-    expect(subject.status).to eq("pending")
+    user = create(:user)
+    conteudo = Conteudo.create!(titulo: "Test", texto: "Texto maior que dez caracteres para validacao passar.", user: user)
+    expect(conteudo.status).to eq("pending")
   end
 
   describe "enums" do
