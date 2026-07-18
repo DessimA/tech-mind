@@ -11,7 +11,7 @@ RSpec.describe "Web::Registrations", type: :request do
 
   describe "POST /register" do
     let(:valid_params) do
-      { nome: "Novo Usuário", email: "novo@exemplo.com", password: "senha-segura" }
+      { user: { nome: "Novo Usuário", email: "novo@exemplo.com", password: "senha-segura" } }
     end
 
     it "cria um novo usuário" do
@@ -26,21 +26,21 @@ RSpec.describe "Web::Registrations", type: :request do
     end
 
     it "rejeita senha curta" do
-      post register_path, params: valid_params.merge(password: "abc")
-      expect(response).to have_http_status(:unprocessable_entity)
+      post register_path, params: { user: { nome: "Novo", email: "novo@exemplo.com", password: "abc" } }
+      expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include(I18n.t("errors.messages.too_short", count: 6))
     end
 
     it "rejeita email duplicado" do
       create(:user, email: "duplicado@exemplo.com")
-      post register_path, params: valid_params.merge(email: "duplicado@exemplo.com")
-      expect(response).to have_http_status(:unprocessable_entity)
+      post register_path, params: { user: { nome: "Novo", email: "duplicado@exemplo.com", password: "senha-segura" } }
+      expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include(I18n.t("errors.messages.taken"))
     end
 
     it "rejeita nome em branco" do
-      post register_path, params: valid_params.merge(nome: "")
-      expect(response).to have_http_status(:unprocessable_entity)
+      post register_path, params: { user: { nome: "", email: "novo@exemplo.com", password: "senha-segura" } }
+      expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include(I18n.t("errors.messages.blank"))
     end
   end

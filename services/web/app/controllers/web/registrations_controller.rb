@@ -14,14 +14,14 @@ module Web
         redirect_to conteudos_path, notice: "Conta criada com sucesso!"
       else
         flash.now[:alert] = @user.errors.full_messages.to_sentence
-        render :new, status: :unprocessable_entity
+        render :new, status: :unprocessable_content
       end
     end
 
     private
 
     def user_params
-      params.permit(:nome, :email, :password)
+      params.require(:user).permit(:nome, :email, :password)
     end
   end
 end
