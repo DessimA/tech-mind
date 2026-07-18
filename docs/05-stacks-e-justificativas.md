@@ -35,11 +35,12 @@ mindmap
 | Servidor | Puma via Docker / Render |
 | Frontend | **Hotwire (Turbo + Stimulus)** — HTML over the wire |
 | Assets | **importmap** (sem Node.js, sem bundlers) |
-| Testes | RSpec + FactoryBot |
+| Testes | RSpec + FactoryBot + WebMock |
 | ORM | ActiveRecord + PostgreSQL |
 | Cache | `redis-rb` + Valkey (ou cache em memória) |
 | Auth | `has_secure_password` (bcrypt) — nativo do Rails |
 | Sessão | Cookie criptografado (adequado para Render free) |
+| I18n | `rails-i18n` + `config.i18n.fallbacks = true` |
 
 ### Por que Rails 8 full-stack (sem Laravel)?
 

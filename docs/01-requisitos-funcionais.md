@@ -99,7 +99,19 @@ sequenceDiagram
 - Se ML Service estiver fora: conteúdo salvo como `failed`
 - Tempo total esperado: < 2s (local) / ~1s (com fallback Groq)
 
-## RF05 - Deploy em Cloud Gratuita
+## RF05 - Testes Automatizados
+
+**Descrição:** O sistema deve ter cobertura de testes em todas as camadas.
+
+**Critérios de Aceitação:**
+- **60 testes RSpec** no Rails: models (User, Conteudo), requests (Web: sessions, registrations, conteudos, health; Api::V1: conteudos)
+- **16 testes Pytest** no FastAPI: predição, health check, fallback Groq
+- FactoryBot para fixtures de dados
+- WebMock para stubs de chamadas externas (ML Service)
+- Testes executados via Docker: `docker compose run --rm web-test`
+- I18n com `rails-i18n` para mensagens em português
+
+## RF06 - Deploy em Cloud Gratuita
 
 **Descrição:** O sistema deve ser implantável em free tiers.
 
@@ -110,7 +122,7 @@ sequenceDiagram
 - Groq API gratuita para fallback de classificação
 - Nenhum recurso pago necessário
 
-## RF06 - Health Check
+## RF07 - Health Check
 
 **Descrição:** Cada microsserviço deve expor health check.
 

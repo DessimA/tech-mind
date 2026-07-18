@@ -2,6 +2,8 @@
 
 ![Ruby](https://img.shields.io/badge/Ruby-3.3-CC342D?style=flat&logo=ruby&logoColor=white)
 ![Rails](https://img.shields.io/badge/Rails-8.1-D30001?style=flat&logo=rubyonrails&logoColor=white)
+![RSpec](https://img.shields.io/badge/RSpec-60_passing-28A745?style=flat&logo=rubygems&logoColor=white)
+![Pytest](https://img.shields.io/badge/Pytest-16_passing-28A745?style=flat&logo=pytest&logoColor=white)
 ![Hotwire](https://img.shields.io/badge/Hotwire-Turbo-FF6F00?style=flat&logo=hotwire&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=flat&logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white)
@@ -52,6 +54,15 @@ flowchart LR
 
 ---
 
+## Status dos Testes
+
+| Serviço | Framework | Testes | Status |
+|---|---|---|---|
+| **Web (Rails)** | RSpec | **60 testes** (models + requests + auth) | ✅ Passando |
+| **ML (FastAPI)** | Pytest | **16 testes** (predição + health + fallback Groq) | ✅ Passando |
+
+---
+
 ## Como Executar (Desenvolvimento Local)
 
 ```bash
@@ -67,8 +78,11 @@ cp .env.example .env
 # 3. Inicie os serviços
 docker compose up -d
 
-# 4. Acesse
-# http://localhost:3000
+# 4. Acesse http://localhost:3000
+
+# 5. Para rodar os testes:
+docker compose run --rm web-test    # RSpec (60 testes)
+docker compose run --rm ml pytest    # Pytest (16 testes)
 ```
 
 ---
@@ -91,4 +105,3 @@ Documentação completa em [`docs/`](docs/):
 | [09-contratos-api.md](docs/09-contratos-api.md) | Contratos formais das APIs |
 | [10-modelo-de-dados.md](docs/10-modelo-de-dados.md) | Schema do banco (users + conteudos) |
 | [10-variaveis-de-ambiente.md](docs/10-variaveis-de-ambiente.md) | Variáveis de ambiente |
-| [11-responsabilidades-e-resiliencia.md](docs/11-responsabilidades-e-resiliencia.md) | Resiliência free tier, timeouts, blast radius |

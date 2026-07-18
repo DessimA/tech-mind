@@ -55,8 +55,11 @@
 **Descrição:** Testes em cada serviço.
 
 **Critérios de Aceitação:**
-- Rails: RSpec (models, controllers, auth, views)
-- FastAPI: Pytest (rotas, pipeline ML, fallback Groq mockado)
+- Rails: **60 testes RSpec** — models (User, Conteudo), requests (Web: sessions, registrations, conteudos, health; Api::V1: conteudos)
+- FastAPI: **16 testes Pytest** — predição, health check, fallback Groq mockado
+- FactoryBot para criação de dados de teste
+- WebMock para stubs de chamadas HTTP externas (ML Service)
+- `rails-i18n` para mensagens de validação em português
 
 ## RNF07 - Segurança
 
