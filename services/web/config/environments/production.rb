@@ -13,14 +13,14 @@ Rails.application.configure do
   config.active_support.report_deprecations = false
 
   # Cache via Valkey (Redis OSS) com fallback para memória
-  config.cache_store = if ENV["REDIS_HOST"].present?
-    :redis_cache_store, {
+  if ENV["REDIS_HOST"].present?
+    config.cache_store = :redis_cache_store, {
       url: "redis://#{ENV.fetch('REDIS_HOST', 'valkey')}:#{ENV.fetch('REDIS_PORT', '6379')}/1",
       expires_in: ENV.fetch("CACHE_TTL", 300).to_i.seconds,
       namespace: "techmind:cache"
     }
   else
-    :memory_store
+    config.cache_store = :memory_store
   end
 
   config.active_record.dump_schema_after_migration = false
