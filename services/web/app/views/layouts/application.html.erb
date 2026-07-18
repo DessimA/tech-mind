@@ -7,41 +7,126 @@
   <meta name="turbo-cache-control" content="no-cache">
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bangers&family=Inter:wght@400;500;600;700&family=Space+Mono&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            base: '#0B0E14',
+            surface: '#151A24',
+            'surface-alt': '#1E2530',
+            ink: '#0A0A0A',
+            accent: {
+              green: '#C6FF3D',
+              cyan: '#29E7CD',
+              magenta: '#FF4FA3',
+              mustard: '#F2C230',
+            },
+          },
+          fontFamily: {
+            display: ['Anton', 'sans-serif'],
+            accent: ['Bangers', 'cursive'],
+            body: ['Inter', 'sans-serif'],
+            mono: ['Space Mono', 'monospace'],
+          },
+          boxShadow: {
+            hard: '4px 4px 0 #0A0A0A',
+            'hard-sm': '2px 2px 0 #0A0A0A',
+            'hard-lg': '6px 6px 0 #0A0A0A',
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    /* Grain texture overlay — sutil, remove o aspecto "digital demais" */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 256px 256px;
+    }
+
+    /* Halftone pattern for decorative sections */
+    .halftone-bg {
+      background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+      background-size: 4px 4px;
+    }
+
+    /* Ink outline utility */
+    .ink-border {
+      border: 2px solid #0A0A0A;
+    }
+
+    /* Sticker shadow utilities */
+    .sticker-shadow {
+      box-shadow: 4px 4px 0 #0A0A0A;
+    }
+    .sticker-shadow-sm {
+      box-shadow: 2px 2px 0 #0A0A0A;
+    }
+
+    /* Glitch hover effect */
+    .glitch-hover:hover {
+      text-shadow:
+        2px 0 #29E7CD,
+        -2px 0 #FF4FA3;
+      transition: text-shadow 0.15s ease;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .glitch-hover:hover {
+        text-shadow: none;
+      }
+    }
+  </style>
 </head>
-<body class="bg-gray-50 text-gray-900 font-sans antialiased min-h-screen flex flex-col">
-  <nav class="bg-white border-b border-gray-200">
+<body class="bg-base text-[#F4F1E8] font-body antialiased min-h-screen flex flex-col">
+  <!-- Grain overlay via pseudo-element no CSS acima -->
+
+  <nav class="bg-surface border-b-2 border-ink relative z-10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16 items-center">
         <div class="flex items-center space-x-8">
-          <%= link_to "TechMind", conteudos_path, class: "text-xl font-bold text-indigo-600" %>
+          <%= link_to conteudos_path, class: "font-display text-2xl text-accent-green uppercase tracking-wide glitch-hover no-underline" do %>
+            Tech<span class="text-accent-magenta">Mind</span>
+          <% end %>
           <% if logged_in? %>
-            <%= link_to "Conteúdos", conteudos_path, class: "text-sm font-medium text-gray-700 hover:text-indigo-600" %>
-            <%= link_to "Novo", new_conteudo_path, class: "px-3 py-1.5 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700" %>
+            <%= link_to "Conteúdos", conteudos_path, class: "text-sm font-medium text-[#A9AFBC] hover:text-accent-cyan transition-colors" %>
+            <%= link_to "Novo", new_conteudo_path, class: "px-4 py-1.5 text-sm font-bold text-ink bg-accent-green border-2 border-ink sticker-shadow hover:-translate-y-0.5 hover:translate-x-0.5 active:translate-x-0 active:translate-y-0 transition-all" %>
           <% end %>
         </div>
         <div class="flex items-center space-x-4">
           <% if logged_in? %>
-            <span class="text-sm text-gray-500"><%= current_user.nome %></span>
-            <%= button_to "Sair", logout_path, method: :post, class: "text-sm text-gray-500 hover:text-red-600" %>
+            <span class="text-sm text-[#A9AFBC] font-mono uppercase tracking-wider text-xs"><%= current_user.nome %></span>
+            <%= button_to "Sair", logout_path, method: :post, class: "text-sm text-[#A9AFBC] hover:text-accent-magenta transition-colors bg-transparent border-none cursor-pointer" %>
           <% else %>
-            <%= link_to "Login", login_path, class: "text-sm text-gray-700 hover:text-indigo-600" %>
-            <%= link_to "Cadastrar", register_path, class: "px-3 py-1.5 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700" %>
+            <%= link_to "Login", login_path, class: "text-sm text-[#A9AFBC] hover:text-accent-cyan transition-colors font-medium" %>
+            <%= link_to "Cadastrar", register_path, class: "px-4 py-1.5 text-sm font-bold text-ink bg-accent-cyan border-2 border-ink sticker-shadow hover:-translate-y-0.5 hover:translate-x-0.5 active:translate-x-0 active:translate-y-0 transition-all" %>
           <% end %>
         </div>
       </div>
     </div>
   </nav>
 
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
     <% if notice %>
-      <div class="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm" data-turbo-temporary>
+      <div class="mb-4 p-4 bg-accent-green/10 border-2 border-accent-green rounded-lg text-accent-green text-sm font-medium" data-turbo-temporary>
         <%= notice %>
       </div>
     <% end %>
 
     <% if alert %>
-      <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm" data-turbo-temporary>
+      <div class="mb-4 p-4 bg-accent-magenta/10 border-2 border-accent-magenta rounded-lg text-accent-magenta text-sm font-medium" data-turbo-temporary>
         <%= alert %>
       </div>
     <% end %>
@@ -49,9 +134,11 @@
     <%= yield %>
   </main>
 
-  <footer class="bg-white border-t border-gray-200 py-4 mt-auto">
-    <div class="max-w-7xl mx-auto px-4 text-center text-xs text-gray-400">
-      TechMind MVP &mdash; Organização Inteligente de Conhecimento
+  <footer class="bg-surface border-t-2 border-ink py-6 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <p class="font-mono text-xs uppercase tracking-widest text-[#A9AFBC]/50">
+        TechMind MVP &mdash; Organização Inteligente de Conhecimento
+      </p>
     </div>
   </footer>
 </body>
