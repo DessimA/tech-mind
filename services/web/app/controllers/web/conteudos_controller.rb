@@ -2,8 +2,6 @@ require "net/http"
 
 module Web
   class ConteudosController < ApplicationController
-    before_action :authenticate_user!
-
     def index
       page = (params[:page] || 1).to_i.clamp(1, 999)
       cache_key = "conteudos:user:#{current_user.id}:page:#{page}:q:#{params[:q]}:sort:#{params[:sort]}"

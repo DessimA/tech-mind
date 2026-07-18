@@ -1,6 +1,8 @@
 class ApplicationController < ActionController::Base
   helper_method :current_user, :logged_in?
 
+  before_action :authenticate_user!
+
   private
 
   def current_user
