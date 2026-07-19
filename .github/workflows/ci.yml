@@ -22,7 +22,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ".ruby-version"
-          bundler-cache: true
+      - run: bundle install
       - run: bundle exec rubocop --parallel --format github
       - run: bundle exec brakeman --quiet --no-pager
 
@@ -76,7 +76,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ".ruby-version"
-          bundler-cache: true
+      - run: bundle install
       - run: bundle exec rails db:create db:migrate
         env:
           RAILS_ENV: test
