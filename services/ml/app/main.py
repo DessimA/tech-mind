@@ -71,6 +71,7 @@ class HealthResponse(BaseModel):
     modelo_carregado: bool
     modelo_ok: bool
     categorias_disponiveis: list[str]
+    threshold: float
 
 
 @app.on_event("startup")
@@ -142,12 +143,17 @@ def groq_fallback(texto: str, texto_limpo: str) -> dict:
 
 @app.get("/health", response_model=HealthResponse)
 def health():
+    threshold_meta = model.metadata.get("threshold_recommended") if model.metadata else None
+    default_threshold = str(threshold_meta) if threshold_meta else "0.5"
+    raw = os.environ.get("ML_THRESHOLD", "")
+    effective = float(raw) if raw.strip() else float(default_threshold)
     return HealthResponse(
         status="ok",
         modelo=model.modelo,
         modelo_carregado=model.pipeline is not None,
         modelo_ok=model.version_ok,
         categorias_disponiveis=model.categorias,
+        threshold=effective,
     )
 
 
@@ -166,7 +172,10 @@ def predict(req: PredictRequest):
             },
         )
 
-    threshold = float(os.environ.get("ML_THRESHOLD", "0.5"))
+    threshold_meta = model.metadata.get("threshold_recommended") if model.metadata else None
+    default_threshold = str(threshold_meta) if threshold_meta else "0.5"
+    raw = os.environ.get("ML_THRESHOLD", "")
+    threshold = float(raw) if raw.strip() else float(default_threshold)
     texto_limpo = preprocess(req.texto)
     probs = model.pipeline.predict_proba([texto_limpo])[0]
     max_prob = float(probs.max())

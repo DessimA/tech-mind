@@ -7,8 +7,7 @@ import pytest
 BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE_DIR))
 
-os.environ["ML_THRESHOLD"] = "0.01"
-os.environ.setdefault("MODEL_VERSION", "v2")
+os.environ.setdefault("MODEL_VERSION", "v3")
 
 
 @pytest.fixture

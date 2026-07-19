@@ -46,6 +46,15 @@ def load_datasets(*paths: str) -> pd.DataFrame:
     return merged
 
 
+def compute_recommended_threshold(pipeline, df: pd.DataFrame, percentile: float = 0.10) -> float:
+    probs = pipeline.predict_proba(list(df["texto_limpo"]))
+    max_probs = probs.max(axis=1)
+    preds = pipeline.classes_[probs.argmax(axis=1)]
+    acertos = preds == df["categoria"].values
+    conf_acertos = pd.Series(max_probs[acertos])
+    return round(float(conf_acertos.quantile(percentile)), 4)
+
+
 def main():
     synthetic = os.environ.get("SYNTHETIC_PATH", str(BASE_DIR / "data" / "train_synthetic.csv"))
     original = os.environ.get("ORIGINAL_PATH", str(BASE_DIR / "data" / "train.csv"))
@@ -83,17 +92,31 @@ def main():
     print(f"Cross-validation: {scores}")
     print(f"Média: {scores.mean():.4f} ± {scores.std():.4f}")
 
+    print("\nAnalisando confiança do modelo...")
+    recommended = compute_recommended_threshold(pipeline, df)
+    print(f"Threshold recomendado (P10 dos acertos): {recommended}")
+
     model_version = os.environ.get("MODEL_VERSION", "v2")
-    ml_threshold = float(os.environ.get("ML_THRESHOLD", "0.5"))
+    ml_threshold = float(os.environ.get("ML_THRESHOLD", str(recommended)))
+
+    probs_test = pipeline.predict_proba(list(X_test))
+    max_probs_test = probs_test.max(axis=1)
+    preds_test = pipeline.classes_[probs_test.argmax(axis=1)]
+    acertos_test = preds_test == y_test.reset_index(drop=True)
+    conf_acertos_test = pd.Series(max_probs_test[acertos_test])
 
     metadata = {
         "version": model_version,
         "trained_at": datetime.now().isoformat(),
         "categories": list(pipeline.classes_),
         "threshold": ml_threshold,
+        "threshold_recommended": recommended,
         "accuracy_holdout": round(acc, 4),
         "cv_mean": round(scores.mean(), 4),
         "cv_std": round(scores.std(), 4),
+        "confidence_mean": round(float(conf_acertos_test.mean()), 4),
+        "confidence_median": round(float(conf_acertos_test.median()), 4),
+        "confidence_p10": round(float(conf_acertos_test.quantile(0.10)), 4),
         "dataset": "train.csv + train_synthetic.csv",
         "n_examples": len(df),
     }

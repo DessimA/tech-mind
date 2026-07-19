@@ -3,7 +3,8 @@ def test_predict_returns_category(client, sample_backend_text):
     assert resp.status_code == 200
     body = resp.json()
     assert isinstance(body["categoria"], str)
-    assert body["probabilidade"] > 0
+    assert isinstance(body["probabilidade"], float)
+    assert 0.0 <= body["probabilidade"] <= 1.0
     assert isinstance(body["informacoes_adicionais"], list)
 
 

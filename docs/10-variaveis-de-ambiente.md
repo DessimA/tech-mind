@@ -37,7 +37,7 @@
 | Variável | Obrigatória | Valor Padrão | Descrição |
 |---|---|---|---|
 | `ML_THRESHOLD` | Não | `0.5` | Threshold para fallback Groq |
-| `MODEL_VERSION` | Não | `v2` | Versão esperada do modelo |
+| `MODEL_VERSION` | Não | `v3` | Versão esperada do modelo |
 
 ## Groq API
 
