@@ -5,13 +5,14 @@ nltk==3.9.1
 joblib==1.4.2
 pandas==2.2.3
 pydantic==2.9.2
+httpx==0.28.1
 
 # data preparation
 datasets>=3.0.0
 
 # test
 pytest==8.3.4
-httpx==0.28.1
+respx==0.22.0
 
 # lint
 ruff==0.9.0

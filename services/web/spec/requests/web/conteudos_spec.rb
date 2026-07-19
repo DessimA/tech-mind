@@ -50,6 +50,23 @@ RSpec.describe "Web::Conteudos", type: :request do
       expect(response.body).to include(conteudo.categoria) if conteudo.categoria.present?
     end
 
+    it "não mostra badge Groq quando probabilidade > 0" do
+      get conteudo_path(conteudo)
+      expect(response.body).not_to include("Groq")
+    end
+
+    it "mostra badge Groq quando probabilidade é 0 e categoria é válida" do
+      groq_conteudo = create(:conteudo, user: user, status: :done, categoria: "Backend", probabilidade: 0.0)
+      get conteudo_path(groq_conteudo)
+      expect(response.body).to include("Groq")
+    end
+
+    it "não mostra badge Groq quando categoria é Desconhecida mesmo com probabilidade 0" do
+      desconhecida = create(:conteudo, user: user, status: :done, categoria: "Desconhecida", probabilidade: 0.0)
+      get conteudo_path(desconhecida)
+      expect(response.body).not_to include("Groq")
+    end
+
     it "retorna 404 para conteúdo de outro usuário" do
       outro = create(:conteudo, user: create(:user))
       get conteudo_path(outro)

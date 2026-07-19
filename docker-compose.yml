@@ -89,6 +89,8 @@ services:
       MODEL_VERSION: ${MODEL_VERSION:-v1}
       GROQ_API_KEY: ${GROQ_API_KEY:-}
       GROQ_TIMEOUT: "5"
+      GROQ_MODEL: ${GROQ_MODEL:-llama-3.1-8b-instant}
+      GROQ_MAX_TOKENS: ${GROQ_MAX_TOKENS:-1024}
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 10s

@@ -2,7 +2,6 @@
 
 
 def test_health_returns_model_status(client):
-    """Health check deve retornar status do modelo."""
     resp = client.get("/health")
     assert resp.status_code == 200
     body = resp.json()
@@ -13,14 +12,12 @@ def test_health_returns_model_status(client):
 
 
 def test_predict_com_texto_muito_longo(client):
-    """Texto com mais de 5000 caracteres deve ser rejeitado."""
     texto_muito_longo = "a" * 5001
     resp = client.post("/predict", json={"texto": texto_muito_longo})
     assert resp.status_code == 422
 
 
 def test_predict_com_threshold_baixo_retorna_desconhecida(client):
-    """Texto genérico sem relação com tecnologia deve retornar Desconhecida."""
     resp = client.post(
         "/predict", json={"texto": "receita de bolo de cenoura com cobertura de chocolate"}
     )
@@ -38,7 +35,6 @@ def test_predict_com_threshold_baixo_retorna_desconhecida(client):
 
 
 def test_predict_probabilidade_no_range(client):
-    """Probabilidade retornada deve estar entre 0 e 1."""
     resp = client.post(
         "/predict",
         json={"texto": "Framework web escrito em Ruby para desenvolvimento de APIs REST"},
@@ -49,7 +45,6 @@ def test_predict_probabilidade_no_range(client):
 
 
 def test_predict_informacoes_adicionais_is_list(client, sample_backend_text):
-    """informacoes_adicionais deve ser uma lista de strings."""
     resp = client.post("/predict", json={"texto": sample_backend_text})
     keywords = resp.json()["informacoes_adicionais"]
     assert isinstance(keywords, list)
@@ -58,8 +53,118 @@ def test_predict_informacoes_adicionais_is_list(client, sample_backend_text):
 
 
 def test_batch_predict_consistency(client):
-    """Mesmo texto deve retornar mesma categoria em chamadas repetidas."""
     texto = "API REST com Ruby on Rails e PostgreSQL"
     resp1 = client.post("/predict", json={"texto": texto})
     resp2 = client.post("/predict", json={"texto": texto})
     assert resp1.json()["categoria"] == resp2.json()["categoria"]
+
+
+def test_groq_fallback_categoria_valida(monkeypatch, client, respx_mock):
+    monkeypatch.setenv("ML_THRESHOLD", "0.99")
+    monkeypatch.setenv("GROQ_API_KEY", "test-key")
+    monkeypatch.setenv("GROQ_MODEL", "llama-3.1-8b-instant")
+
+    from httpx import Response
+
+    respx_mock.post("https://api.groq.com/openai/v1/chat/completions").respond(
+        200,
+        json={
+            "choices": [{"message": {"content": "Backend"}}],
+        },
+    )
+
+    resp = client.post(
+        "/predict",
+        json={"texto": "Framework web escrito em Ruby para desenvolvimento de APIs REST"},
+    )
+    body = resp.json()
+    assert body["categoria"] == "Backend"
+    assert body["probabilidade"] == 0.0
+
+
+def test_groq_fallback_timeout(monkeypatch, client, respx_mock):
+    monkeypatch.setenv("ML_THRESHOLD", "0.99")
+    monkeypatch.setenv("GROQ_API_KEY", "test-key")
+
+    import httpx
+
+    respx_mock.post("https://api.groq.com/openai/v1/chat/completions").mock(
+        side_effect=httpx.TimeoutException("timeout")
+    )
+
+    resp = client.post(
+        "/predict",
+        json={"texto": "Framework web escrito em Ruby"},
+    )
+    body = resp.json()
+    assert body["categoria"] == "Desconhecida"
+    assert body["probabilidade"] == 0.0
+
+
+def test_groq_fallback_http_429(monkeypatch, client, respx_mock):
+    monkeypatch.setenv("ML_THRESHOLD", "0.99")
+    monkeypatch.setenv("GROQ_API_KEY", "test-key")
+
+    from httpx import Response
+
+    respx_mock.post("https://api.groq.com/openai/v1/chat/completions").respond(
+        429, json={"error": "rate_limited"}
+    )
+
+    resp = client.post(
+        "/predict",
+        json={"texto": "Framework web escrito em Ruby"},
+    )
+    body = resp.json()
+    assert body["categoria"] == "Desconhecida"
+    assert body["probabilidade"] == 0.0
+
+
+def test_groq_fallback_json_malformado(monkeypatch, client, respx_mock):
+    monkeypatch.setenv("ML_THRESHOLD", "0.99")
+    monkeypatch.setenv("GROQ_API_KEY", "test-key")
+
+    respx_mock.post("https://api.groq.com/openai/v1/chat/completions").respond(
+        200, text="not valid json"
+    )
+
+    resp = client.post(
+        "/predict",
+        json={"texto": "Framework web escrito em Ruby"},
+    )
+    body = resp.json()
+    assert body["categoria"] == "Desconhecida"
+    assert body["probabilidade"] == 0.0
+
+
+def test_groq_fallback_sem_api_key(monkeypatch, client):
+    monkeypatch.setenv("ML_THRESHOLD", "0.99")
+    monkeypatch.setenv("GROQ_API_KEY", "")
+
+    resp = client.post(
+        "/predict",
+        json={"texto": "Framework web escrito em Ruby"},
+    )
+    body = resp.json()
+    assert body["categoria"] == "Desconhecida"
+    assert body["probabilidade"] == 0.0
+
+
+def test_groq_fallback_categoria_invalida(monkeypatch, client, respx_mock):
+    monkeypatch.setenv("ML_THRESHOLD", "0.99")
+    monkeypatch.setenv("GROQ_API_KEY", "test-key")
+
+    respx_mock.post("https://api.groq.com/openai/v1/chat/completions").respond(
+        200,
+        json={
+            "choices": [{"message": {"content": "Categoria Inexistente"}}],
+        },
+    )
+
+    resp = client.post(
+        "/predict",
+        json={"texto": "Framework web escrito em Ruby"},
+    )
+    body = resp.json()
+    assert body["categoria"] == "Desconhecida"
+    assert body["probabilidade"] == 0.0
