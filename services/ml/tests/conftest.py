@@ -25,7 +25,7 @@ def client():
 
 @pytest.fixture
 def sample_backend_text():
-    return "Framework web escrito em Ruby para desenvolvimento de APIs REST"
+    return "Construção de APIs REST com Ruby on Rails usando ActiveRecord e migrations"
 
 
 @pytest.fixture
