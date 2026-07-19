@@ -1,6 +1,6 @@
 {
-  "version": "v1",
-  "trained_at": "2026-07-09T16:00:56.210619",
+  "version": "v2",
+  "trained_at": "2026-07-19T01:37:01.623221",
   "categories": [
     "Arquitetura & Design",
     "Backend",
@@ -11,5 +11,10 @@
     "Mobile",
     "Segurança"
   ],
-  "threshold": 0.5
+  "threshold": 0.5,
+  "accuracy_holdout": 0.9297,
+  "cv_mean": 0.9165,
+  "cv_std": 0.0131,
+  "dataset": "train.csv + train_synthetic.csv",
+  "n_examples": 922
 }

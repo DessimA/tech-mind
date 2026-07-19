@@ -86,7 +86,7 @@ services:
       - ./services/ml:/app
     environment:
       ML_THRESHOLD: ${ML_THRESHOLD:-0.5}
-      MODEL_VERSION: ${MODEL_VERSION:-v1}
+      MODEL_VERSION: ${MODEL_VERSION:-v2}
       GROQ_API_KEY: ${GROQ_API_KEY:-}
       GROQ_TIMEOUT: "5"
       GROQ_MODEL: ${GROQ_MODEL:-llama-3.1-8b-instant}
