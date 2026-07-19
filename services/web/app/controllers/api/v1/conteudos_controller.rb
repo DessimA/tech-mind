@@ -3,7 +3,7 @@ module Api
     class ConteudosController < ApplicationController
       include Cacheable
 
-      skip_before_action :authenticate_user!, only: [ :index, :show, :create, :update, :destroy ]
+      skip_before_action :authenticate_user!, only: [ :index, :show, :create, :update, :destroy, :reclassify ]
       rescue_from ActiveRecord::RecordNotFound, with: :not_found
       rescue_from ActiveRecord::RecordInvalid, with: :unprocessable
 
@@ -113,6 +113,27 @@ module Api
         conteudo.destroy!
         invalidate_cache
         head :no_content
+      end
+
+      def reclassify
+        conteudo = @api_user.conteudos.find(params[:id])
+        conteudo.update!(status: :processing)
+
+        result = MlService.new(conteudo.texto).call
+
+        if result.success?
+          conteudo.update!(
+            categoria: result.data["categoria"],
+            probabilidade: result.data["probabilidade"],
+            informacoes_adicionais: result.data["informacoes_adicionais"],
+            status: :done
+          )
+        else
+          conteudo.update!(status: :failed)
+        end
+
+        invalidate_cache
+        render json: ConteudoSerializer.new(conteudo.reload).as_json
       end
 
       private

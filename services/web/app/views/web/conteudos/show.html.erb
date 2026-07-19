@@ -70,6 +70,9 @@
       </p>
       <span class="text-[#A9AFBC]/20">|</span>
       <%= link_to "Editar", edit_conteudo_path(@conteudo), class: "text-xs font-mono uppercase tracking-wider text-accent-mustard hover:text-accent-green transition-colors" %>
+      <%= button_to "Reclassificar", reclassify_conteudo_path(@conteudo), method: :post,
+          class: "text-xs font-mono uppercase tracking-wider text-accent-cyan hover:text-accent-green transition-colors cursor-pointer bg-transparent border-none p-0",
+          data: { disable_with: "Reclassificando..." } %>
       <%= button_to "Excluir", @conteudo, method: :delete,
           class: "text-xs font-mono uppercase tracking-wider text-accent-magenta hover:text-red-400 transition-colors cursor-pointer bg-transparent border-none p-0",
           data: { turbo_confirm: "Tem certeza que deseja excluir este conteúdo?" } %>

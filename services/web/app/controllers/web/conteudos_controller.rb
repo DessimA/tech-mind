@@ -109,6 +109,29 @@ module Web
       redirect_to conteudos_path, alert: "Conteúdo não encontrado."
     end
 
+    def reclassify
+      @conteudo = current_user.conteudos.find(params[:id])
+      @conteudo.update!(status: :processing)
+
+      result = MlService.new(@conteudo.texto).call
+
+      if result.success?
+        @conteudo.update!(
+          categoria: result.data["categoria"],
+          probabilidade: result.data["probabilidade"],
+          informacoes_adicionais: result.data["informacoes_adicionais"],
+          status: :done
+        )
+      else
+        @conteudo.update!(status: :failed)
+      end
+
+      invalidate_cache
+      redirect_to @conteudo, notice: "Conteúdo reclassificado!"
+    rescue ActiveRecord::RecordNotFound
+      redirect_to conteudos_path, alert: "Conteúdo não encontrado."
+    end
+
     private
 
     def conteudo_params

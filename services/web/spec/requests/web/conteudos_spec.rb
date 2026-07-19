@@ -161,4 +161,18 @@ RSpec.describe "Web::Conteudos", type: :request do
       }.not_to change(Conteudo, :count)
     end
   end
+
+  describe "POST /conteudos/:id/reclassify" do
+    it "reclassifica conteúdo existente" do
+      post reclassify_conteudo_path(conteudo)
+      expect(response).to redirect_to(conteudo_path(conteudo))
+      expect(conteudo.reload.status).to eq("done")
+    end
+
+    it "redireciona para conteúdo de outro usuário" do
+      outro = create(:conteudo, user: create(:user))
+      post reclassify_conteudo_path(outro)
+      expect(response).to redirect_to(conteudos_path)
+    end
+  end
 end

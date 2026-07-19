@@ -125,4 +125,25 @@ RSpec.describe "Api::V1::Conteudos", type: :request do
       }.not_to change(Conteudo, :count)
     end
   end
+
+  describe "POST /api/v1/conteudos/:id/reclassify" do
+    it "reclassifica conteúdo" do
+      post reclassify_api_v1_conteudo_path(conteudo)
+      expect(response).to have_http_status(:ok)
+      body = response.parsed_body
+      expect(body["id"]).to eq(conteudo.id)
+      expect(conteudo.reload.status).to eq("done")
+    end
+
+    it "retorna 404 para conteúdo inexistente" do
+      post reclassify_api_v1_conteudo_path(99999)
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "não permite reclassificar conteúdo de outro usuário" do
+      outro = create(:conteudo, user: create(:user))
+      post reclassify_api_v1_conteudo_path(outro)
+      expect(response).to have_http_status(:not_found)
+    end
+  end
 end
