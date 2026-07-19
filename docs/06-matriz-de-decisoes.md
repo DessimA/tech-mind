@@ -17,6 +17,11 @@
 | 13 | Sessão | Cookie criptografado | Fechada | Sobrevive a restarts do Render (filesystem efêmero) |
 | 14 | Pool DB | 1 conexão | Fechada | Respeita limite de 2 do Supabase free tier |
 | 15 | Workers | 1 worker/thread por serviço | Fechada | 512MB RAM é insuficiente para mais |
+| 16 | **Geração de dados sintéticos** | **Groq API gera perguntas em PT-BR** | Fechada | Stack Overflow c17hawke dataset não tem mais tags; Groq gera 865 exemplos |
+| 17 | **Classificação híbrida** | **Logistic Regression + Groq fallback** | Fechada | Modelo local (92.97% acc) + Groq como fallback quando confiança < threshold |
+| 18 | **Normalização de categoria** | **Case-insensitive + strip + remoção de pontuação** | Fechada | Groq varia resposta (ex.: "backend." / "Backend"); normalização evita "Desconhecida" falso positiva |
+| 19 | **Editar/Remover Conteúdo** | **Hard delete (sem soft delete)** | Fechada | MVP sem necessidade de lixeira; depende do `dependent: :destroy` do User |
+| 20 | **Reclassificar** | **POST /conteudos/:id/reclassify** | Fechada | Permite reclassificar sem editar texto, útil após retreino do modelo |
 
 ### Decisões removidas (sobras da arquitetura anterior)
 

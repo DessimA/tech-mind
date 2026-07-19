@@ -104,8 +104,8 @@ sequenceDiagram
 **Descrição:** O sistema deve ter cobertura de testes em todas as camadas.
 
 **Critérios de Aceitação:**
-- **72 testes RSpec** no Rails: models (User, Conteudo), requests (Web: sessions, registrations, conteudos, health; Api::V1: conteudos)
-- **16 testes Pytest** no FastAPI: predição, health check, fallback Groq
+  - **93 testes RSpec** no Rails: models (User, Conteudo), requests (Web + API: CRUD completo + reclassify)
+  - **25 testes Pytest** no FastAPI: predição, health check, fallback Groq, normalização de categoria
 - FactoryBot para fixtures de dados
 - WebMock para stubs de chamadas externas (ML Service)
 - Testes executados via Docker: `docker compose run --rm web-test`

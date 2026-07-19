@@ -70,7 +70,7 @@ Health check do ML Service.
 ```json
 {
   "status": "ok",
-  "modelo": "logistic_regression_v1",
+  "modelo": "logistic_regression_v2",
   "modelo_carregado": true,
   "modelo_ok": true,
   "categorias_disponiveis": ["Backend", "Frontend", "DevOps & Infraestrutura", "Dados & ML", "Mobile", "Segurança", "Arquitetura & Design", "Carreira & Soft Skills"]
@@ -110,3 +110,66 @@ O campo `status` no banco segue:
 
 Quando `status = "done"`, campos de classificação estão preenchidos.
 Quando `status = "failed"`, campos de classificação retornam `null`.
+
+---
+
+## 4. CRUD de Conteúdos — Web (HTML)
+
+### GET /conteudos/:id/edit
+Formulário para editar título e texto de um conteúdo.
+
+### PATCH /conteudos/:id
+Atualiza título/texto e reclassifica o conteúdo.
+
+**Redirect:** para `show` do conteúdo (sucesso) ou re-render `edit` (falha de validação).
+
+### DELETE /conteudos/:id
+Remove o conteúdo.
+
+**Redirect:** para `index` com notice.
+
+### POST /conteudos/:id/reclassify
+Reclassifica o conteúdo com o texto atual (útil quando o modelo foi retreinado).
+
+**Redirect:** para `show` do conteúdo com notice.
+
+---
+
+## 5. CRUD de Conteúdos — API (JSON)
+
+### PATCH /api/v1/conteudos/:id
+Atualiza título/texto e reclassifica o conteúdo.
+
+**Request:**
+```json
+{
+  "titulo": "Novo Título",
+  "texto": "Novo texto técnico com mais de 10 caracteres"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "id": 1,
+  "titulo": "Novo Título",
+  "categoria": "Backend",
+  "probabilidade": 0.87,
+  "informacoes_adicionais": ["ruby", "rails", "api"],
+  "status": "done",
+  "created_at": "2026-07-19T01:00:00Z",
+  "updated_at": "2026-07-19T02:00:00Z"
+}
+```
+
+**Response (401):** `{ "error": "unauthorized", "mensagem": "Autenticação necessária" }`
+
+### DELETE /api/v1/conteudos/:id
+Remove o conteúdo.
+
+**Response:** `204 No Content`
+
+### POST /api/v1/conteudos/:id/reclassify
+Reclassifica o conteúdo com o texto atual.
+
+**Response (200 OK):** Mesmo schema do `PATCH` response.
