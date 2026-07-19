@@ -133,6 +133,6 @@ sequenceDiagram
 | Cache | **Redis Cloud / memória** | 30MB grátis; fallback para cache em memória |
 | Timeouts ML | **Net::ReadTimeout / Net::OpenTimeout** | Ruby 3.3 removeu `Net::TimeoutError` |
 | Cache serialization | **`.to_a` antes de escrever no Redis** | ActiveRecord relations têm classes anônimas não serializáveis |
-| Testes | **RSpec + Pytest + WebMock** | 60 specs + 16 testes; ML Service stubado via WebMock |
+| Testes | **RSpec + Pytest + WebMock** | 72 specs + 22 testes; ML Service stubado via WebMock |
 | I18n | **rails-i18n + fallbacks** | Validações em pt-BR com fallback para en |
 | Orquestração (dev) | **Docker Compose** | Simples, 1 comando para subir tudo |

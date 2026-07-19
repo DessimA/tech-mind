@@ -1,4 +1,4 @@
-class CreateConteudos < ActiveRecord::Migration[7.2]
+class CreateConteudos < ActiveRecord::Migration[8.1]
   def up
     execute <<-SQL
       CREATE TYPE status_conteudo AS ENUM ('pending', 'processing', 'done', 'failed');

@@ -54,7 +54,7 @@ flowchart LR
 
 | Serviço | Framework | Testes | Status |
 |---|---|---|---|
-| **Web (Rails)** | RSpec | **68 testes** | ✅ Passando |
+| **Web (Rails)** | RSpec | **72 testes** | ✅ Passando |
 | **ML (FastAPI)** | Pytest | **16 testes** | ✅ Passando |
 | **Linters** | RuboCop + Brakeman + Ruff | 27 ofensas (cosméticas) | ⚠️ Auto-corrigível |
 
@@ -78,7 +78,7 @@ docker compose up -d
 # 4. Acesse http://localhost:3000
 
 # 5. Para rodar os testes:
-docker compose run --rm web-test           # RSpec (68 testes)
+docker compose run --rm web-test           # RSpec (72 testes)
 docker compose run --rm ml pytest           # Pytest (16 testes)
 
 # 6. Para rodar linters:

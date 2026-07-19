@@ -78,7 +78,7 @@
 | `DB_TEST_NAME` | Não | `techmind_test` | Banco isolado para testes |
 | `SECRET_KEY_BASE` | Sim (testes) | `test-secret-key` | Chave para sessão em teste |
 
-> 🧪 **60 testes RSpec** no Rails + **16 testes Pytest** no FastAPI. Execute com:
+> 🧪 **72 testes RSpec** no Rails + **22 testes Pytest** no FastAPI. Execute com:
 > ```bash
 > docker compose run --rm web-test   # RSpec
 > docker compose run --rm ml pytest   # Pytest

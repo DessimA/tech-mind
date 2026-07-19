@@ -29,18 +29,16 @@ Trabalhamos com divulgação coordenada. Após o patch ser disponibilizado, conc
 Os seguintes itens estão dentro do escopo desta política:
 
 - Código fonte nos repositórios oficiais
-- Dependências gerenciadas via Bundler, Composer e Pip
+- Dependências gerenciadas via Bundler e Pip
 - Configurações de Docker e Docker Compose
-- Infraestrutura declarada via Terraform
 
 ## Fora do Escopo
 
-- Serviços de terceiros (AWS, LocalStack)
+- Serviços de terceiros (provedores de nuvem, APIs externas)
 - Dependências indiretas (transitivas)
 
 ## Práticas de Segurança do Projeto
 
-- Secrets gerenciados via AWS Secrets Manager (LocalStack)
 - Sem credenciais hardcoded
 - Rede interna do Docker para comunicação entre serviços
 - Rate limiting nos endpoints da API (100 req/min/IP)

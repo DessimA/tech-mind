@@ -55,7 +55,7 @@
 **Descrição:** Testes em cada serviço.
 
 **Critérios de Aceitação:**
-- Rails: **60 testes RSpec** — models (User, Conteudo), requests (Web: sessions, registrations, conteudos, health; Api::V1: conteudos)
+- Rails: **72 testes RSpec** — models (User, Conteudo), requests (Web: sessions, registrations, conteudos, health; Api::V1: conteudos)
 - FastAPI: **16 testes Pytest** — predição, health check, fallback Groq mockado
 - FactoryBot para criação de dados de teste
 - WebMock para stubs de chamadas HTTP externas (ML Service)
