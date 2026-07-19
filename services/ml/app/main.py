@@ -1,3 +1,4 @@
+import logging
 import os
 import re
 
@@ -7,6 +8,8 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
 from app.model.loader import model
+
+logger = logging.getLogger(__name__)
 
 nltk.download("stopwords", quiet=True)
 stopwords_pt = nltk.corpus.stopwords.words("portuguese")
@@ -24,6 +27,17 @@ CATEGORIAS_VALIDAS = [
     "Segurança",
     "Desconhecida",
 ]
+
+CATEGORIAS_NORMALIZADAS = {re.sub(r"[^a-z0-9]", "", c.lower()): c for c in CATEGORIAS_VALIDAS}
+
+
+def normalizar_categoria(resposta: str) -> str:
+    resposta = resposta.strip().rstrip(".,;!?")
+    if resposta in CATEGORIAS_VALIDAS:
+        return resposta
+    chave = re.sub(r"[^a-z0-9]", "", resposta.lower())
+    return CATEGORIAS_NORMALIZADAS.get(chave, "Desconhecida")
+
 
 GROQ_SYSTEM_PROMPT = """Você é um classificador de conteúdo técnico. Classifique o texto fornecido em exatamente uma das seguintes categorias:
 
@@ -109,19 +123,20 @@ def groq_fallback(texto: str, texto_limpo: str) -> dict:
             )
             resp.raise_for_status()
             data = resp.json()
-            categoria = data["choices"][0]["message"]["content"].strip()
-
-            if categoria not in CATEGORIAS_VALIDAS:
-                categoria = "Desconhecida"
+            raw = data["choices"][0]["message"]["content"]
+            categoria = normalizar_categoria(raw)
 
             keywords = extract_keywords(texto_limpo) if texto_limpo else []
+
+            logger.info("groq_fallback ok: raw=%s -> categoria=%s", raw, categoria)
 
             return {
                 "categoria": categoria,
                 "probabilidade": 0.0,
                 "informacoes_adicionais": keywords,
             }
-    except Exception:
+    except Exception as e:
+        logger.warning("groq_fallback erro: %s: %s", type(e).__name__, e)
         return {"categoria": "Desconhecida", "probabilidade": 0.0, "informacoes_adicionais": []}
 
 

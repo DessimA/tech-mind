@@ -164,3 +164,63 @@ def test_groq_fallback_categoria_invalida(monkeypatch, client, respx_mock):
     body = resp.json()
     assert body["categoria"] == "Desconhecida"
     assert body["probabilidade"] == 0.0
+
+
+def test_groq_fallback_normaliza_com_ponto_final(monkeypatch, client, respx_mock):
+    monkeypatch.setenv("ML_THRESHOLD", "0.99")
+    monkeypatch.setenv("GROQ_API_KEY", "test-key")
+
+    respx_mock.post("https://api.groq.com/openai/v1/chat/completions").respond(
+        200,
+        json={
+            "choices": [{"message": {"content": "Backend."}}],
+        },
+    )
+
+    resp = client.post(
+        "/predict",
+        json={"texto": "Framework web escrito em Ruby"},
+    )
+    body = resp.json()
+    assert body["categoria"] == "Backend"
+    assert body["probabilidade"] == 0.0
+
+
+def test_groq_fallback_normaliza_case(monkeypatch, client, respx_mock):
+    monkeypatch.setenv("ML_THRESHOLD", "0.99")
+    monkeypatch.setenv("GROQ_API_KEY", "test-key")
+
+    respx_mock.post("https://api.groq.com/openai/v1/chat/completions").respond(
+        200,
+        json={
+            "choices": [{"message": {"content": "backend"}}],
+        },
+    )
+
+    resp = client.post(
+        "/predict",
+        json={"texto": "Framework web escrito em Ruby"},
+    )
+    body = resp.json()
+    assert body["categoria"] == "Backend"
+    assert body["probabilidade"] == 0.0
+
+
+def test_groq_fallback_normaliza_espaco_extra(monkeypatch, client, respx_mock):
+    monkeypatch.setenv("ML_THRESHOLD", "0.99")
+    monkeypatch.setenv("GROQ_API_KEY", "test-key")
+
+    respx_mock.post("https://api.groq.com/openai/v1/chat/completions").respond(
+        200,
+        json={
+            "choices": [{"message": {"content": "  Dados & ML "}}],
+        },
+    )
+
+    resp = client.post(
+        "/predict",
+        json={"texto": "Framework web escrito em Ruby"},
+    )
+    body = resp.json()
+    assert body["categoria"] == "Dados & ML"
+    assert body["probabilidade"] == 0.0
