@@ -64,8 +64,6 @@ def test_groq_fallback_categoria_valida(monkeypatch, client, respx_mock):
     monkeypatch.setenv("GROQ_API_KEY", "test-key")
     monkeypatch.setenv("GROQ_MODEL", "llama-3.1-8b-instant")
 
-    from httpx import Response
-
     respx_mock.post("https://api.groq.com/openai/v1/chat/completions").respond(
         200,
         json={
@@ -104,8 +102,6 @@ def test_groq_fallback_timeout(monkeypatch, client, respx_mock):
 def test_groq_fallback_http_429(monkeypatch, client, respx_mock):
     monkeypatch.setenv("ML_THRESHOLD", "0.99")
     monkeypatch.setenv("GROQ_API_KEY", "test-key")
-
-    from httpx import Response
 
     respx_mock.post("https://api.groq.com/openai/v1/chat/completions").respond(
         429, json={"error": "rate_limited"}

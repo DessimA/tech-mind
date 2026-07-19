@@ -3,7 +3,7 @@ module Api
     class ConteudosController < ApplicationController
       include Cacheable
 
-      skip_before_action :authenticate_user!, only: [:index, :show, :create]
+      skip_before_action :authenticate_user!, only: [ :index, :show, :create ]
       rescue_from ActiveRecord::RecordNotFound, with: :not_found
       rescue_from ActiveRecord::RecordInvalid, with: :unprocessable
 
@@ -11,7 +11,7 @@ module Api
 
       def index
         page = (params[:page] || 1).to_i.clamp(1, 999)
-        per_page = [(params[:per_page] || 20).to_i, 100].min
+        per_page = [ (params[:per_page] || 20).to_i, 100 ].min
         cache_key = "#{cache_namespace}:page:#{page}:per:#{per_page}:q:#{params[:q]}:sort:#{params[:sort]}"
 
         result = cached_conteudos(cache_key) do
@@ -116,7 +116,7 @@ module Api
 
         unless @api_user
           render json: { error: "unauthorized", mensagem: "Autenticação necessária" }, status: :unauthorized
-          return
+          nil
         end
       end
 

@@ -18,7 +18,7 @@ class MlService
   def call
     uri = URI("http://#{@host}:#{@port}/predict")
     http = Net::HTTP.new(uri.host, uri.port)
-    http.open_timeout = [@timeout / 2, 3].max
+    http.open_timeout = [ @timeout / 2, 3 ].max
     http.read_timeout = @timeout
 
     request = Net::HTTP::Post.new(uri)
@@ -34,7 +34,8 @@ class MlService
       Rails.logger.warn "[ML Service] HTTP #{response.code} para texto=#{@texto.truncate(80)}"
       Response.new(success?: false, error: "HTTP #{response.code}")
     end
-  rescue Net::ReadTimeout, Net::OpenTimeout, Errno::ECONNREFUSED, JSON::ParserError => e
+  rescue Net::ReadTimeout, Net::OpenTimeout, Errno::ECONNREFUSED, JSON::ParserError,
+         SocketError, Net::HTTPBadResponse => e
     Rails.logger.warn "[ML Service] #{e.class}: #{e.message} para texto=#{@texto.truncate(80)}"
     Response.new(success?: false, error: "#{e.class}: #{e.message}")
   end

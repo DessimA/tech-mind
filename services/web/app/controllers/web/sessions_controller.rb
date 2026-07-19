@@ -1,6 +1,6 @@
 module Web
   class SessionsController < ApplicationController
-    skip_before_action :authenticate_user!, only: [:new, :create]
+    skip_before_action :authenticate_user!, only: [ :new, :create ]
 
     def new
       redirect_to conteudos_path if logged_in?

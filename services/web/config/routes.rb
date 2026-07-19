@@ -10,7 +10,7 @@ Rails.application.routes.draw do
     post "register", to: "registrations#create"
     post "logout",   to: "sessions#destroy"
 
-    resources :conteudos, only: [:index, :show, :new, :create]
+    resources :conteudos, only: [ :index, :show, :new, :create ]
   end
 
   # Health check via API path
@@ -19,7 +19,7 @@ Rails.application.routes.draw do
   # API routes — controllers em app/controllers/api/v1/ (Api::V1:: namespace)
   namespace :api do
     namespace :v1 do
-      resources :conteudos, only: [:index, :show, :create]
+      resources :conteudos, only: [ :index, :show, :create ]
     end
   end
 

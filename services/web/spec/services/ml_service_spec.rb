@@ -15,7 +15,7 @@ RSpec.describe MlService do
             body: {
               categoria: "DevOps",
               probabilidade: 0.95,
-              informacoes_adicionais: ["docker", "kubernetes", "deploy"]
+              informacoes_adicionais: [ "docker", "kubernetes", "deploy" ]
             }.to_json,
             headers: { "Content-Type" => "application/json" }
           )
@@ -26,7 +26,7 @@ RSpec.describe MlService do
         expect(result).to be_success
         expect(result.data["categoria"]).to eq("DevOps")
         expect(result.data["probabilidade"]).to eq(0.95)
-        expect(result.data["informacoes_adicionais"]).to match_array(["docker", "kubernetes", "deploy"])
+        expect(result.data["informacoes_adicionais"]).to match_array([ "docker", "kubernetes", "deploy" ])
       end
     end
 
@@ -82,6 +82,34 @@ RSpec.describe MlService do
         result = service.call
         expect(result).not_to be_success
         expect(result.error).to include("OpenTimeout")
+      end
+    end
+
+    context "quando ocorre falha de DNS (SocketError)" do
+      before do
+        stub_request(:post, "http://ml:8000/predict")
+          .to_raise(SocketError)
+      end
+
+      it "retorna Response com success? false e loga warning" do
+        expect(Rails.logger).to receive(:warn).with(/SocketError/)
+        result = service.call
+        expect(result).not_to be_success
+        expect(result.error).to include("SocketError")
+      end
+    end
+
+    context "quando o ML retorna resposta HTTP malformada" do
+      before do
+        stub_request(:post, "http://ml:8000/predict")
+          .to_raise(Net::HTTPBadResponse)
+      end
+
+      it "retorna Response com success? false e loga warning" do
+        expect(Rails.logger).to receive(:warn).with(/HTTPBadResponse/)
+        result = service.call
+        expect(result).not_to be_success
+        expect(result.error).to include("HTTPBadResponse")
       end
     end
 

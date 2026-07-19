@@ -17,14 +17,14 @@ class Rack::Attack
       [
         429,
         { "Content-Type" => "application/json" },
-        [{ error: "rate_limited", mensagem: "Muitas requisições. Tente novamente em #{retry_after} segundos." }.to_json]
+        [ { error: "rate_limited", mensagem: "Muitas requisições. Tente novamente em #{retry_after} segundos." }.to_json ]
       ]
     else
       # HTML response
       [
         429,
         { "Content-Type" => "text/html" },
-        ["<html><body><h1>429</h1><p>Muitas requisições. Tente novamente em #{retry_after} segundos.</p></body></html>"]
+        [ "<html><body><h1>429</h1><p>Muitas requisições. Tente novamente em #{retry_after} segundos.</p></body></html>" ]
       ]
     end
   }
