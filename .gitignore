@@ -23,6 +23,8 @@ services/web/log/
 services/web/tmp/
 services/web/public/assets/
 services/web/storage/
+services/web/config/master.key
+services/web/config/credentials/*.key
 
 ## Python (services/ml)
 services/ml/__pycache__/
@@ -35,6 +37,7 @@ services/ml/.pytest_cache/
 services/ml/notebooks/.ipynb_checkpoints/
 
 ## IDE
+.AGENTS.md
 .vscode/
 .idea/
 *.swp
