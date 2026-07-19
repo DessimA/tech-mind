@@ -83,4 +83,46 @@ RSpec.describe "Api::V1::Conteudos", type: :request do
       expect(response).to have_http_status(:unprocessable_entity)
     end
   end
+
+  describe "PATCH /api/v1/conteudos/:id" do
+    it "atualiza e reclassifica o conteúdo" do
+      patch api_v1_conteudo_path(conteudo), params: { titulo: "API Atualizado", texto: "Texto atualizado pela API com caracteres suficientes." }
+      expect(response).to have_http_status(:ok)
+      body = response.parsed_body
+      expect(body["id"]).to eq(conteudo.id)
+      expect(conteudo.reload.titulo).to eq("API Atualizado")
+    end
+
+    it "retorna 404 para conteúdo inexistente" do
+      patch api_v1_conteudo_path(99999), params: { titulo: "X" }
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "retorna 401 se não autenticado" do
+      post logout_path
+      patch api_v1_conteudo_path(conteudo), params: { titulo: "X" }
+      expect(response).to have_http_status(:unauthorized)
+    end
+  end
+
+  describe "DELETE /api/v1/conteudos/:id" do
+    it "remove o conteúdo" do
+      expect {
+        delete api_v1_conteudo_path(conteudo)
+      }.to change(Conteudo, :count).by(-1)
+      expect(response).to have_http_status(:no_content)
+    end
+
+    it "retorna 404 para conteúdo inexistente" do
+      delete api_v1_conteudo_path(99999)
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "retorna apenas conteúdos do usuário" do
+      outro = create(:conteudo, user: create(:user))
+      expect {
+        delete api_v1_conteudo_path(outro)
+      }.not_to change(Conteudo, :count)
+    end
+  end
 end

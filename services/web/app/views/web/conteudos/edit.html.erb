@@ -1,0 +1,37 @@
+<% content_for :title, "Editar: #{@conteudo.titulo}" %>
+
+<div class="mb-6">
+  <%= link_to "← Voltar".html_safe, @conteudo, class: "text-sm text-[#A9AFBC] hover:text-accent-cyan transition-colors font-mono uppercase tracking-wider" %>
+</div>
+
+<div class="max-w-2xl">
+  <h1 class="text-3xl font-display text-accent-green uppercase tracking-wide mb-6">Editar Conteúdo</h1>
+
+  <%= form_with model: @conteudo, url: conteudo_path(@conteudo), method: :patch, class: "bg-surface border-2 border-ink sticker-shadow rounded-lg p-6 space-y-6" do |f| %>
+    <% if @conteudo.errors.any? %>
+      <div class="p-4 bg-accent-magenta/10 border-2 border-accent-magenta rounded-lg text-accent-magenta text-sm font-medium">
+        <%= @conteudo.errors.full_messages.to_sentence %>
+      </div>
+    <% end %>
+
+    <div>
+      <%= f.label :titulo, "Título", class: "block text-sm font-medium text-[#F4F1E8] mb-1" %>
+      <%= f.text_field :titulo, required: true, maxlength: 200, minlength: 3,
+            class: "w-full px-3 py-2 bg-surface-alt border-b-2 border-[#A9AFBC]/30 text-[#F4F1E8] rounded-lg focus:border-accent-cyan focus:outline-none transition-colors text-sm placeholder:text-[#A9AFBC]/40",
+            placeholder: "Ex: Introdução ao Docker" %>
+    </div>
+
+    <div>
+      <%= f.label :texto, "Texto", class: "block text-sm font-medium text-[#F4F1E8] mb-1" %>
+      <%= f.text_area :texto, rows: 10, required: true, maxlength: 5000, minlength: 10,
+            class: "w-full px-3 py-2 bg-surface-alt border-b-2 border-[#A9AFBC]/30 text-[#F4F1E8] rounded-lg focus:border-accent-cyan focus:outline-none transition-colors text-sm placeholder:text-[#A9AFBC]/40 resize-y" %>
+      <p class="mt-1 text-xs font-mono text-[#A9AFBC]/50">Mín. 10, máx. 5.000 caracteres</p>
+    </div>
+
+    <div class="flex items-center justify-end space-x-3 border-t-2 border-ink pt-4">
+      <%= link_to "Cancelar", @conteudo, class: "px-4 py-2 text-sm font-mono uppercase tracking-wider text-[#A9AFBC] hover:text-accent-magenta transition-colors" %>
+      <%= f.submit "Salvar", class: "px-4 py-2.5 text-sm font-bold text-ink bg-accent-green border-2 border-ink sticker-shadow hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer uppercase tracking-wide",
+            data: { disable_with: "Reclassificando..." } %>
+    </div>
+  <% end %>
+</div>

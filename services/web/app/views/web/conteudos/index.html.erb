@@ -62,6 +62,10 @@
             </td>
             <td class="px-6 py-4 text-right">
               <%= link_to "Detalhes", c, class: "text-accent-cyan hover:text-accent-green transition-colors text-sm font-mono uppercase tracking-wider glitch-hover" %>
+              <%= link_to "Editar", edit_conteudo_path(c), class: "ml-3 text-accent-mustard hover:text-accent-green transition-colors text-sm font-mono uppercase tracking-wider" %>
+              <%= button_to "Excluir", c, method: :delete,
+                  class: "ml-3 text-accent-magenta hover:text-red-400 transition-colors text-sm font-mono uppercase tracking-wider cursor-pointer bg-transparent border-none p-0 inline",
+                  data: { turbo_confirm: "Tem certeza?" } %>
             </td>
           </tr>
         <% end %>

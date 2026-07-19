@@ -65,6 +65,50 @@ module Web
       render :new, status: :unprocessable_entity
     end
 
+    def edit
+      @conteudo = current_user.conteudos.find(params[:id])
+    rescue ActiveRecord::RecordNotFound
+      redirect_to conteudos_path, alert: "Conteúdo não encontrado."
+    end
+
+    def update
+      @conteudo = current_user.conteudos.find(params[:id])
+
+      ActiveRecord::Base.transaction do
+        @conteudo.update!(conteudo_params.merge(status: :processing))
+
+        result = MlService.new(@conteudo.texto).call
+
+        if result.success?
+          @conteudo.update!(
+            categoria: result.data["categoria"],
+            probabilidade: result.data["probabilidade"],
+            informacoes_adicionais: result.data["informacoes_adicionais"],
+            status: :done
+          )
+        else
+          @conteudo.update!(status: :failed)
+        end
+
+        invalidate_cache
+      end
+
+      redirect_to @conteudo, notice: "Conteúdo atualizado e reclassificado!"
+    rescue ActiveRecord::RecordNotFound
+      redirect_to conteudos_path, alert: "Conteúdo não encontrado."
+    rescue ActiveRecord::RecordInvalid
+      render :edit, status: :unprocessable_entity
+    end
+
+    def destroy
+      @conteudo = current_user.conteudos.find(params[:id])
+      @conteudo.destroy!
+      invalidate_cache
+      redirect_to conteudos_path, notice: "Conteúdo removido."
+    rescue ActiveRecord::RecordNotFound
+      redirect_to conteudos_path, alert: "Conteúdo não encontrado."
+    end
+
     private
 
     def conteudo_params

@@ -111,4 +111,54 @@ RSpec.describe "Web::Conteudos", type: :request do
       end
     end
   end
+
+  describe "GET /conteudos/:id/edit" do
+    it "renderiza formulário de edição" do
+      get edit_conteudo_path(conteudo)
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("Editar")
+      expect(response.body).to include(conteudo.titulo)
+    end
+
+    it "redireciona para conteúdo de outro usuário" do
+      outro = create(:conteudo, user: create(:user))
+      get edit_conteudo_path(outro)
+      expect(response).to redirect_to(conteudos_path)
+    end
+  end
+
+  describe "PATCH /conteudos/:id" do
+    it "atualiza e reclassifica o conteúdo" do
+      patch conteudo_path(conteudo), params: { conteudo: { titulo: "Título Atualizado", texto: "Texto atualizado com mais de 10 caracteres para testar" } }
+      expect(response).to redirect_to(conteudo_path(conteudo))
+      expect(conteudo.reload.titulo).to eq("Título Atualizado")
+    end
+
+    it "rejeita título curto" do
+      patch conteudo_path(conteudo), params: { conteudo: { titulo: "ab", texto: "texto com mais de 10 caracteres para validação aqui" } }
+      expect(response).to have_http_status(:unprocessable_entity)
+    end
+
+    it "não permite editar conteúdo de outro usuário" do
+      outro = create(:conteudo, user: create(:user))
+      patch conteudo_path(outro), params: { conteudo: { titulo: "Hacked" } }
+      expect(response).to redirect_to(conteudos_path)
+    end
+  end
+
+  describe "DELETE /conteudos/:id" do
+    it "remove o conteúdo" do
+      expect {
+        delete conteudo_path(conteudo)
+      }.to change(Conteudo, :count).by(-1)
+      expect(response).to redirect_to(conteudos_path)
+    end
+
+    it "não permite remover conteúdo de outro usuário" do
+      outro = create(:conteudo, user: create(:user))
+      expect {
+        delete conteudo_path(outro)
+      }.not_to change(Conteudo, :count)
+    end
+  end
 end
