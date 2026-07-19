@@ -26,5 +26,7 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
   config.active_record.attributes_for_inspect = [ :id ]
 
+  config.action_dispatch.trusted_proxies = %w[127.0.0.1 ::1 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16]
+
   config.middleware.use Rack::Attack
 end

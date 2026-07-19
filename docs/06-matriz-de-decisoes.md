@@ -27,6 +27,7 @@
 | Sidekiq / Workers assíncronos | Removida | ML síncrono é suficiente e mais simples |
 | LocalStack / Terraform | Removida | Sem AWS; secrets via env vars |
 | S3 (armazenamento de textos) | Removida | Texto já está no PostgreSQL |
+| credentials.yml.enc / master.key | Removida | App usa SECRET_KEY_BASE via env var; Rails credentials system era resquício do template |
 
 ### Decisões Postergadas (Pós-MVP)
 
