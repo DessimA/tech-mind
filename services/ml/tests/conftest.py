@@ -7,7 +7,7 @@ import pytest
 BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE_DIR))
 
-os.environ.setdefault("MODEL_VERSION", "v3")
+os.environ.setdefault("MODEL_VERSION", "v4")
 
 
 @pytest.fixture

@@ -1,6 +1,6 @@
 {
-  "version": "v3",
-  "trained_at": "2026-07-19T19:45:35.701318",
+  "version": "v4",
+  "trained_at": "2026-07-19T20:16:22.452867",
   "categories": [
     "Arquitetura & Design",
     "Backend",
@@ -11,14 +11,14 @@
     "Mobile",
     "Segurança"
   ],
-  "threshold": 0.5,
-  "threshold_recommended": 0.3083,
-  "accuracy_holdout": 0.9297,
-  "cv_mean": 0.9165,
-  "cv_std": 0.0131,
-  "confidence_mean": 0.4669,
-  "confidence_median": 0.454,
-  "confidence_p10": 0.2754,
-  "dataset": "train.csv + train_synthetic.csv",
-  "n_examples": 922
+  "threshold": 0.3747,
+  "threshold_recommended": 0.3747,
+  "accuracy_holdout": 0.8939,
+  "cv_mean": 0.8819,
+  "cv_std": 0.0089,
+  "confidence_mean": 0.6312,
+  "confidence_median": 0.6434,
+  "confidence_p10": 0.326,
+  "dataset": "train.csv + train_real.csv",
+  "n_examples": 7495
 }

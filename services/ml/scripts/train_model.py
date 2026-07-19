@@ -56,11 +56,11 @@ def compute_recommended_threshold(pipeline, df: pd.DataFrame, percentile: float 
 
 
 def main():
-    synthetic = os.environ.get("SYNTHETIC_PATH", str(BASE_DIR / "data" / "train_synthetic.csv"))
+    real = os.environ.get("REAL_PATH", str(BASE_DIR / "data" / "train_real.csv"))
     original = os.environ.get("ORIGINAL_PATH", str(BASE_DIR / "data" / "train.csv"))
 
     print("Carregando datasets...")
-    df = load_datasets(original, synthetic)
+    df = load_datasets(original, real)
     print(f"\nDistribuição:\n{df['categoria'].value_counts().to_string()}")
 
     print("\nPré-processando textos...")
@@ -97,7 +97,8 @@ def main():
     print(f"Threshold recomendado (P10 dos acertos): {recommended}")
 
     model_version = os.environ.get("MODEL_VERSION", "v2")
-    ml_threshold = float(os.environ.get("ML_THRESHOLD", str(recommended)))
+    raw_threshold = os.environ.get("ML_THRESHOLD", "")
+    ml_threshold = float(raw_threshold) if raw_threshold.strip() else float(recommended)
 
     probs_test = pipeline.predict_proba(list(X_test))
     max_probs_test = probs_test.max(axis=1)
@@ -117,7 +118,7 @@ def main():
         "confidence_mean": round(float(conf_acertos_test.mean()), 4),
         "confidence_median": round(float(conf_acertos_test.median()), 4),
         "confidence_p10": round(float(conf_acertos_test.quantile(0.10)), 4),
-        "dataset": "train.csv + train_synthetic.csv",
+        "dataset": "train.csv + train_real.csv",
         "n_examples": len(df),
     }
 

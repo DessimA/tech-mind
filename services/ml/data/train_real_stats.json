@@ -1,0 +1,15 @@
+{
+  "fonte": "Stack Exchange API",
+  "baixado_em": "2026-07-19T20:13:27.955224",
+  "total_exemplos": 7929,
+  "exemplos_por_categoria": {
+    "Backend": 1300,
+    "Frontend": 1200,
+    "DevOps & Infraestrutura": 1192,
+    "Dados & ML": 1198,
+    "Mobile": 879,
+    "Segurança": 897,
+    "Arquitetura & Design": 918,
+    "Carreira & Soft Skills": 345
+  }
+}
